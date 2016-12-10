@@ -73,7 +73,7 @@ class App extends Component {
 
   initStream() {
     navigator.getUserMedia (
-      {audio: true},
+      {audio: true, video: true},
       this.handleYouStream,
       this.handleYouStreamError
     );
