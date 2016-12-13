@@ -1,3 +1,14 @@
+/**
+* @Author: Stijn Van Hulle <stijnvanhulle>
+* @Date:   2016-12-13T11:32:29+01:00
+* @Email:  me@stijnvanhulle.be
+* @Last modified by:   stijnvanhulle
+* @Last modified time: 2016-12-13T11:55:06+01:00
+* @License: stijnvanhulle.be
+*/
+
+
+
 import React, {Component} from 'react';
 import IO from 'socket.io-client';
 import Peer from 'peerjs';
@@ -9,6 +20,24 @@ class App extends Component {
   state = {
     youStream: undefined,
     strangerStream: undefined
+  }
+  constructor(props, context) {
+    super(props, context);
+    if (annyang) {
+      // Let's define a command.
+      const commands = {
+        hello: function() {
+          alert(`Hello world!`);
+        }
+      };
+
+      // Add our commands to annyang
+      annyang.addCommands(commands);
+
+
+      // Start listening.
+      annyang.start();
+    }
   }
 
   initPeer = () => {
@@ -72,11 +101,10 @@ class App extends Component {
   handleYouStreamError = e => console.error(e);
 
   initStream() {
-    navigator.getUserMedia (
-      {audio: true, video: true},
-      this.handleYouStream,
-      this.handleYouStreamError
-    );
+    navigator.getUserMedia({
+      audio: true,
+      video: true
+    }, this.handleYouStream, this.handleYouStreamError);
   }
 
   componentDidMount() {
@@ -88,8 +116,8 @@ class App extends Component {
 
     return (
       <main>
-          <Video stream={youStream} />
-          <Video stream={strangerStream} />
+        <Video stream={youStream} muted={true} />
+        <Video stream={strangerStream} muted={false} />
       </main>
     );
   }
