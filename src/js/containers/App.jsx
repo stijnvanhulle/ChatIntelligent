@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-13T22:11:39+01:00
+* @Last modified time: 2016-12-14T14:08:31+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -28,7 +28,8 @@ class App extends Component {
   }
   state = {
     youStream: null,
-    strangerStream: null
+    strangerStream: null,
+    canListen: false
   }
 
   componentDidMount() {
@@ -36,16 +37,37 @@ class App extends Component {
   }
 
   loadAnn = () => {
+    let canListen = false;
+    const self = this;
     if (annyang) {
       // Let's define a command.
       const commands = {};
-      commands[annNames.ONLINE] = () => {
-        speak(`hello world`);
-
+      commands[annNames.OK] = () => {
+        canListen = true;
       };
 
       // Add our commands to annyang
       annyang.addCommands(commands);
+
+      annyang.addCallback(`result`, userSaid => {
+        const text = userSaid[0];
+        if (text == annNames.OK) {
+          canListen = true;
+        }
+        setTimeout(function() {
+          canListen = false;
+        }, 5000);
+
+        console.log(userSaid, canListen);
+        if (canListen) {
+          self.socket.emit(socketNames.SPEECH, text);
+          if (text != annNames.OK) {
+            canListen = false;
+          }
+
+        }
+
+      });
 
       // Start listening.
       annyang.start();
@@ -58,7 +80,8 @@ class App extends Component {
     this.socket.on(socketNames.CONNECT, () => {
       this.initPeer();
     });
-    this.socket.on(`found`, this.handleWSFound);
+    this.socket.on(socketNames.SPEECH_POST, this.handleWSpeechPost);
+    this.socket.on(socketNames.FOUND, this.handleWSFound);
 
     window.socket = this.socket;
   }
@@ -76,6 +99,9 @@ class App extends Component {
   }
 
   // WS
+  handleWSpeechPost = text => {
+    speak(text);
+  }
   handleWSFound = strangeid => {
     const {youStream} = this.state;
     const call = this.peer.call(strangeid, youStream);

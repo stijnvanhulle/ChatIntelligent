@@ -3,15 +3,21 @@
 * @Date:   2016-12-09T14:48:19+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-13T21:34:54+01:00
+* @Last modified time: 2016-12-14T13:42:07+01:00
 * @License: stijnvanhulle.be
 */
 
 const Status = require('../lib/const/status');
 const {search, linkStranger, cleanPaired} = require('../lib/socket');
+const Chance = require('chance');
+const chance = new Chance();
 
 const global = require('../lib/const/global');
 const socketNames = require('../lib/const/socketNames');
+
+const apiai = require('apiai');
+const app = apiai("bcdae007f870445c9b1fafb0b5177bae");
+
 let users = [];
 
 const onMessageSocket = (io, socket, me) => {
@@ -25,7 +31,7 @@ const onMessageSocket = (io, socket, me) => {
 
   });
 
-  socket.on('search', () => {
+  socket.on(socketNames.SEARCH, () => {
     const stranger = search(users, me);
     if (stranger) {
       me.status = Status.PAIRED;
@@ -34,6 +40,26 @@ const onMessageSocket = (io, socket, me) => {
       socket.emit('found', stranger.socketId);
     }
     console.log('Users:', users.length, " ", users);
+  });
+
+  socket.on(socketNames.SPEECH, (text) => {
+
+    var request = app.textRequest(text.toString(), {sessionId: chance.hash({length: 15})});
+
+    request.on('response', function(res) {
+      console.log(res);
+      if (res.result) {
+        const {speech} = res.result.fulfillment;
+        io.emit(socketNames.SPEECH_POST, speech);
+      }
+
+    });
+
+    request.on('error', function(error) {
+      console.log(error);
+    });
+
+    request.end();
   });
 
 };

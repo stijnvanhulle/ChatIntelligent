@@ -13,7 +13,11 @@
     "node": "6.8.0"
   },
   "dependencies": {
+    "api.ai": "^1.0.2",
+    "apiai": "^3.0.3",
     "axios": "^0.15.3",
+    "chance": "^1.0.4",
+    "chance.js": "0.0.1",
     "dotenv": "^2.0.0",
     "eventemitter2": "^2.2.1",
     "forever": "^0.15.2",
