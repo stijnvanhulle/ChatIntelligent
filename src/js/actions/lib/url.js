@@ -10,12 +10,12 @@
 
 
 
-const API = '/api'
+const API = `/api`;
 export default {
-  DEFAULT: API + '/',
-  USER: API + '/user',
-  FRIEND: API + '/friend',
-  FRIEND_ACCEPT: API + '/friend/accept',
-  USER_GET: API + '/user' + '/{id}/',
-  USER_UPDATE: API + '/user' + '/{id}/update',
+  DEFAULT: `${API  }/`,
+  USER: `${API  }/user`,
+  FRIEND: `${API  }/friend`,
+  FRIEND_ACCEPT: `${API  }/friend/accept`,
+  USER_GET: `${API  }/user` + `/{id}/`,
+  USER_UPDATE: `${API  }/user` + `/{id}/update`,
 };
