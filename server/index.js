@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-09T14:43:21+01:00
+* @Last modified time: 2016-12-14T15:47:00+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -12,10 +12,12 @@
 require(`dotenv`).load();
 const pluginHandler = require(`./lib/pluginHandler`);
 const path = require(`path`);
+const mongoose = require("mongoose");
 const Server = require('hapi').Server;
 //const WebpackPlugin = require('hapi-webpack-plugin');
 const port = process.env.PORT || 3000;
-const {version} = require('../package.json');
+const mongo=process.env.mongo|| 'localhost';
+const {version}= require('../package.json');
 
 const server = new Server({
   connections: {
@@ -27,15 +29,37 @@ const server = new Server({
   }
 });
 
+
+
+const mongodb = {
+  options: {
+    db: {
+      native_parser: true
+    },
+    server: {
+      poolSize: 5
+    }
+  },
+  uri: 'mongodb://'+ mongo +':3001/chat'
+};
+
+
 server.connection({port});
 server.register(require(`./modules/`), pluginHandler);
 server.register(require(`./routes/`), pluginHandler);
 
 const startServer = () => {
-  server.start(err => {
-    if (err)
-      console.error(err);
-    console.log(`Server running at: http://localhost:${port} - version:${version}`);
+  mongoose.connect(mongodb.uri, mongodb.options, (err) => {
+    if (err){
+      console.log(err);
+    }else{
+      server.start(err => {
+        if (err)
+          console.error(err);
+        console.log(`Server running at: http://localhost:${port} - version:${version}`);
+      });
+    }
+
   });
 
 };

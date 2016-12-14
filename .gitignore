@@ -6,3 +6,5 @@ Session.vim
 *~
 .DS_Store
 node_modules
+server/public
+server/mongodb
