@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T17:36:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T20:33:33+01:00
+* @Last modified time: 2016-12-14T21:16:01+01:00
  * @License: stijnvanhulle.be
  */
 const mongoose = require("mongoose");
@@ -26,7 +26,8 @@ module.exports.load = () => {
     lastName: String,
     username: String,
     email: String,
-    online:Boolean
+    online:Boolean,
+    password:String
   });
 
   schema.pre('save', function(next) {

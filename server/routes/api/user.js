@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T20:17:23+01:00
+* @Last modified time: 2016-12-14T20:38:10+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -62,6 +62,27 @@ module.exports = [
     }
 
   }, {
+    method: `GET`,
+    path: url.USER_ONLINE,
+    config: {
+      auth: false
+    },
+    handler: function(request, reply) {
+      const {userController} = require('../../controllers');
+      try {
+        userController.getOnlineUsers().then((users) => {
+          reply(users);
+        }).catch(err => {
+          throw new Error(err);
+        });
+      } catch (e) {
+        console.log(e);
+        reply(e);
+      }
+
+    }
+
+  },{
     method: `POST`,
     path: url.USER_UPDATE,
     config: {

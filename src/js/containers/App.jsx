@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T14:08:31+01:00
+* @Last modified time: 2016-12-14T20:57:57+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -124,7 +124,14 @@ class App extends Component {
       secure: true
     });
     this.peer.on(`open`, () => {
-      this.socket.emit(`search`);
+      let obj = {};
+      const userId = localStorage.getItem(`userId`);
+      if (userId) {
+        obj = {
+          userId
+        };
+      }
+      this.socket.emit(`search`, obj);
     });
 
     this.peer.on(`call`, call => {

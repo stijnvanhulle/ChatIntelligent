@@ -3,7 +3,7 @@
 * @Date:   2016-12-09T14:48:19+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T13:42:07+01:00
+* @Last modified time: 2016-12-14T20:59:17+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -31,9 +31,13 @@ const onMessageSocket = (io, socket, me) => {
 
   });
 
-  socket.on(socketNames.SEARCH, () => {
+  socket.on(socketNames.SEARCH, (obj) => {
     const stranger = search(users, me);
     if (stranger) {
+      if (obj && obj.userId) {
+        me.userId = userId;
+      }
+
       me.status = Status.PAIRED;
       me.paired = stranger.socketId;
       users = linkStranger(users, me);
@@ -44,7 +48,9 @@ const onMessageSocket = (io, socket, me) => {
 
   socket.on(socketNames.SPEECH, (text) => {
 
-    var request = app.textRequest(text.toString(), {sessionId: chance.hash({length: 15})});
+    var request = app.textRequest(text.toString(), {
+      sessionId: chance.hash({length: 15})
+    });
 
     request.on('response', function(res) {
       console.log(res);

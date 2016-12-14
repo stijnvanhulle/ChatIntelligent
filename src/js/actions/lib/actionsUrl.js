@@ -3,9 +3,10 @@
 * @Date:   2016-12-09T15:33:34+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T20:27:07+01:00
+* @Last modified time: 2016-12-14T21:14:51+01:00
 * @License: stijnvanhulle.be
 */
+import {setSuccessAndFail} from '../../lib/functions';
 const item = {
   ERROR: `error`,
   LOAD_USERS: `LOAD_USERS`,
@@ -19,4 +20,4 @@ const item = {
   ADD_STRANGER_STREAM: `ADD_STRANGER_STREAM`
 };
 
-export default item;
+export default setSuccessAndFail(item);

@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T20:33:21+01:00
+* @Last modified time: 2016-12-14T20:41:53+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -12,11 +12,12 @@ const {User: Model} = require('./mongo');
 class Emitter extends EventEmitter {}
 
 class User {
-  constructor({firstName, lastName, username, email}) {
+  constructor({firstName, lastName, username, email, password}) {
     try {
       this.firstName = firstName;
       this.lastName = lastName;
       this.username = username;
+      this.password = password;
       this.email = email;
     } catch (e) {
       console.log(e);
@@ -30,6 +31,10 @@ class User {
     this.online = online;
   }
 
+  encrypPassword() {
+    this.password = this.password;
+  }
+
   reset() {
     this.id = null;
     this.model = Model;
@@ -41,6 +46,7 @@ class User {
   load({
     firstName,
     lastName,
+    password,
     date,
     id,
     username,
@@ -69,6 +75,9 @@ class User {
       this.online = online
         ? Boolean(online)
         : this.online;
+      this.password = password
+        ? password
+        : this.password;
 
     } catch (e) {
       console.log(e);

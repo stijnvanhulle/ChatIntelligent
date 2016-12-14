@@ -3,7 +3,7 @@
 * @Date:   2016-12-14T19:55:16+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T21:20:10+01:00
+* @Last modified time: 2016-12-14T20:55:33+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -12,16 +12,17 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T21:20:10+01:00
+* @Last modified time: 2016-12-14T20:55:33+01:00
 * @License: stijnvanhulle.be
 */
 
 import React, {Component} from 'react';
+import axios from 'axios';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as userActions from '../actions/userActions';
-import RegisterForm from '../components/forms/registerForm';
-class RegisterPage extends Component {
+import LoginForm from '../components/forms/loginForm';
+class LoginPage extends Component {
   state = {
     user: {},
     errors: {},
@@ -30,15 +31,23 @@ class RegisterPage extends Component {
   constructor(props, context) {
     super(props, context);
   }
-  addUser = e => {
+  loginUser = e => {
     e.preventDefault();
-    console.log(`saving ${this.state.user}`);
-    this.props.actions.createUser(this.state.user).then(ok => {
-      console.log(ok);
-      this.setState({user: {}});
-    }).catch(err => {
-      console.log(err);
-    });
+    console.log(`login ${this.state.user}`);
+    //login
+    const user = this.state.user;
+    if (user.username && user.password) {
+      axios.get(url.LOGIN, {
+        username: user.username,
+        password: user.password
+      }).then(response => {
+        const data = response.data;
+        localStorage.setItem(`userId`, user.id);
+        console.log(`login`, data);
+      }).catch(err => {
+        throw err;
+      });
+    }
 
   }
   onUserChange = e => {
@@ -46,30 +55,20 @@ class RegisterPage extends Component {
     const user = this.state.user;
     user[field] = e.target.value.toString();
 
-    if (field == `password` || field == `passwordRepeat`) {
-      if (user[`password`] && user[`passwordRepeat`]) {
-        if (user[`password`] != user[`passwordRepeat`]) {
-          const errors = this.state.errors;
-          errors.password = `Password not the same`;
-          this.setState({errors});
-        }
-      }
-    }
-
     return this.setState({user: user});
   }
 
   render() {
     return (
       <div>
-        <RegisterForm onChange={this.onUserChange} onSave={this.addUser} user={this.state.user} errors={this.state.errors} saving={this.state.saving} />
+        <LoginForm onChange={this.onUserChange} onSave={this.loginUser} user={this.state.user} errors={this.state.errors} saving={this.state.saving} />
       </div>
     );
   }
 }
 
 const mapStateToProps = (mapState, ownProps) => {
-  return {users: mapState.users, friends: mapState.friends};
+  return {};
 };
 const mapDispatchToProps = dispatch => {
   return {
@@ -77,4 +76,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(RegisterPage);
+export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);

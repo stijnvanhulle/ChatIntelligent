@@ -3,13 +3,41 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T20:35:31+01:00
+* @Last modified time: 2016-12-14T21:23:10+01:00
 * @License: stijnvanhulle.be
 */
 const {calculateId} = require('./lib/functions');
 
 const {User, Friend} = require('../models');
 const {User: UserModel, Friend: FriendModel} = require('../models/mongo');
+
+const getUserByUsername = (username) => {
+  return new Promise((resolve, reject) => {
+    try {
+      if (!username)
+        reject('No username for user');
+
+      UserModel.find({username: username}).exec(function(err, docs) {
+        if (err) {
+          reject(err);
+        } else {
+          let users = docs.map((item) => {
+            let user = new User();
+            user.load(item);
+            return user;
+          });
+          resolve(users);
+        }
+      });
+
+    } catch (e) {
+      console.log(e);
+      reject(e);
+    }
+
+  });
+
+};
 
 const getUser = (id) => {
   return new Promise((resolve, reject) => {
@@ -42,7 +70,7 @@ const getOnlineUsers = () => {
       if (!id)
         reject('No id for user');
 
-      UserModel.find({online: true}).exec(function(err, doc) {
+      UserModel.find({online: true}).exec(function(err, docs) {
         if (err) {
           reject(err);
         } else {
@@ -70,15 +98,22 @@ module.exports.addUser = (user) => {
       if (!user instanceof User) {
         throw new Error('No instance of');
       }
-
-      calculateId(UserModel).then(id => {
-        user.id = id;
-        user.save().then((doc) => {
-          resolve(doc);
-        }).catch(err => {
-          reject(err);
-        });
-      });
+      getUserByUsername(user.username).then(users => {
+        if (users && users.length > 0) {
+          reject('Username already taken');
+        } else {
+          calculateId(UserModel).then(id => {
+            user.id = id;
+            user.save().then((doc) => {
+              resolve(doc);
+            }).catch(err => {
+              reject(err);
+            });
+          });
+        }
+      }).catch(err => {
+        reject(err);
+      })
 
     } catch (e) {
       console.log(e);
@@ -203,4 +238,4 @@ module.exports.acceptFriend = (userId1, userId2) => {
 
 module.exports.getUser = getUser;
 module.exports.getOnlineUsers = getOnlineUsers;
-module.exports.updateUser=updateUser;
+module.exports.updateUser = updateUser;
