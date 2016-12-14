@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T20:16:58+01:00
+* @Last modified time: 2016-12-14T20:33:21+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -12,12 +12,7 @@ const {User: Model} = require('./mongo');
 class Emitter extends EventEmitter {}
 
 class User {
-  constructor({
-    firstName,
-    lastName,
-    username,
-    email
-  }) {
+  constructor({firstName, lastName, username, email}) {
     try {
       this.firstName = firstName;
       this.lastName = lastName;
@@ -31,10 +26,15 @@ class User {
 
   }
 
+  setOnline(online) {
+    this.online = online;
+  }
+
   reset() {
     this.id = null;
     this.model = Model;
     this.date = null;
+    this.online = false;
     this.events = new Emitter();
   }
 
@@ -44,7 +44,8 @@ class User {
     date,
     id,
     username,
-    email
+    email,
+    online
   }) {
     try {
       this.firstName = firstName
@@ -65,6 +66,9 @@ class User {
       this.date = date
         ? date
         : this.date;
+      this.online = online
+        ? Boolean(online)
+        : this.online;
 
     } catch (e) {
       console.log(e);

@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T20:17:17+01:00
+* @Last modified time: 2016-12-14T20:35:31+01:00
 * @License: stijnvanhulle.be
 */
 const {calculateId} = require('./lib/functions');
@@ -24,6 +24,34 @@ const getUser = (id) => {
           let user = new User();
           user.load(doc);
           resolve(user);
+        }
+      });
+
+    } catch (e) {
+      console.log(e);
+      reject(e);
+    }
+
+  });
+
+};
+
+const getOnlineUsers = () => {
+  return new Promise((resolve, reject) => {
+    try {
+      if (!id)
+        reject('No id for user');
+
+      UserModel.find({online: true}).exec(function(err, doc) {
+        if (err) {
+          reject(err);
+        } else {
+          let users = docs.map((item) => {
+            let user = new User();
+            user.load(item);
+            return user;
+          });
+          resolve(users);
         }
       });
 
@@ -174,4 +202,5 @@ module.exports.acceptFriend = (userId1, userId2) => {
 };
 
 module.exports.getUser = getUser;
+module.exports.getOnlineUsers = getOnlineUsers;
 module.exports.updateUser=updateUser;
