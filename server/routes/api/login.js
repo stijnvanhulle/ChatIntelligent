@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T21:00:28+01:00
+* @Last modified time: 2016-12-14T21:42:28+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -27,7 +27,8 @@ module.exports = [
         loginController.loginUser(username, password).then((doc) => {
           reply(doc);
         }).catch(err => {
-          throw new Error(err);
+          console.log(err);
+          reply(new Error(err));
         });
       } catch (e) {
         console.log(e);
@@ -50,7 +51,8 @@ module.exports = [
         loginController.logoffUser(userId).then((doc) => {
           reply(doc);
         }).catch(err => {
-          throw new Error(err);
+          console.log(err);
+          reply(new Error(err));
         });
       } catch (e) {
         console.log(e);

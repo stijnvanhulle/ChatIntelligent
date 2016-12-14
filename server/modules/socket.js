@@ -3,12 +3,12 @@
 * @Date:   2016-12-09T14:48:19+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T20:59:17+01:00
+* @Last modified time: 2016-12-14T21:57:17+01:00
 * @License: stijnvanhulle.be
 */
 
 const Status = require('../lib/const/status');
-const {search, linkStranger, cleanPaired} = require('../lib/socket');
+const {search, linkStranger, cleanPaired, updateMe} = require('../lib/socket');
 const Chance = require('chance');
 const chance = new Chance();
 
@@ -32,11 +32,14 @@ const onMessageSocket = (io, socket, me) => {
   });
 
   socket.on(socketNames.SEARCH, (obj) => {
+    if (obj && obj.userId) {
+      me.userId = obj.userId;
+      updateMe(users, me);
+      console.log(users);
+    }
+
     const stranger = search(users, me);
     if (stranger) {
-      if (obj && obj.userId) {
-        me.userId = userId;
-      }
 
       me.status = Status.PAIRED;
       me.paired = stranger.socketId;

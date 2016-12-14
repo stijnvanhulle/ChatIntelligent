@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T20:38:10+01:00
+* @Last modified time: 2016-12-14T21:42:21+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -22,14 +22,16 @@ module.exports = [
     handler: function(request, reply) {
       const {userController} = require('../../controllers');
       try {
-        const user = new User(request.payload);
+        const user = new User();
+        user.load(request.payload);
 
         userController.addUser(user).then((doc) => {
           user.id = doc.id;
           user.date = doc.date;
           reply(user.json(stringify = false, removeEmpty = true));
         }).catch(err => {
-          throw new Error(err);
+          console.log(err);
+          reply(new Error(err));
         });
       } catch (e) {
         console.log(e);
@@ -52,7 +54,8 @@ module.exports = [
         userController.getUser(userId).then((user) => {
           reply(user.json(stringify = false, removeEmpty = true));
         }).catch(err => {
-          throw new Error(err);
+          console.log(err);
+          reply(new Error(err));
         });
       } catch (e) {
         console.log(e);
@@ -73,7 +76,8 @@ module.exports = [
         userController.getOnlineUsers().then((users) => {
           reply(users);
         }).catch(err => {
-          throw new Error(err);
+          console.log(err);
+          reply(new Error(err));
         });
       } catch (e) {
         console.log(e);
@@ -82,7 +86,7 @@ module.exports = [
 
     }
 
-  },{
+  }, {
     method: `POST`,
     path: url.USER_UPDATE,
     config: {
@@ -97,7 +101,8 @@ module.exports = [
         userController.updateUser(user).then((doc) => {
           reply(user.json(stringify = false, removeEmpty = true));
         }).catch(err => {
-          throw new Error(err);
+          console.log(err);
+          reply(new Error(err));
         });
       } catch (e) {
         console.log(e);

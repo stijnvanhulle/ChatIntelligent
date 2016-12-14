@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T16:43:54+01:00
+* @Last modified time: 2016-12-14T21:42:34+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -29,7 +29,8 @@ module.exports = [
           friend.date = doc.date;
           reply(friend.json(stringify = false, removeEmpty = true));
         }).catch(err => {
-          throw new Error(err);
+          console.log(err);
+          reply(new Error(err));
         });
       } catch (e) {
         console.log(e);
@@ -52,7 +53,8 @@ module.exports = [
         userController.acceptFriend(userId1, userId2).then((doc) => {
           reply(doc);
         }).catch(err => {
-          throw new Error(err);
+          console.log(err);
+          reply(new Error(err));
         });
       } catch (e) {
         console.log(e);

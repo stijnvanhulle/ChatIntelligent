@@ -3,7 +3,7 @@
 * @Date:   2016-12-14T19:55:16+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T21:20:10+01:00
+* @Last modified time: 2016-12-14T21:24:29+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -12,7 +12,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T21:20:10+01:00
+* @Last modified time: 2016-12-14T21:24:29+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -48,9 +48,12 @@ class RegisterPage extends Component {
 
     if (field == `password` || field == `passwordRepeat`) {
       if (user[`password`] && user[`passwordRepeat`]) {
+        const errors = this.state.errors;
         if (user[`password`] != user[`passwordRepeat`]) {
-          const errors = this.state.errors;
           errors.password = `Password not the same`;
+          this.setState({errors});
+        } else {
+          errors.password = null;
           this.setState({errors});
         }
       }

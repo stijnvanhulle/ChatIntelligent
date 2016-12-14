@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T21:09:00+01:00
+* @Last modified time: 2016-12-14T21:52:01+01:00
 * @License: stijnvanhulle.be
 */
 const {calculateId} = require('./lib/functions');
@@ -67,17 +67,21 @@ const loginUser = (username, password) => {
       if (!username || !password) {
         reject('no username or password');
       }
-      getUserWithPassword(username, password).then(user => {
+      let user;
+      getUserWithPassword(username, password).then(item => {
+        user=item;
         user.setOnline(true);
+        user=user.json(stringify = false, removeEmpty = true);
+        console.log(user);
         UserModel.update({
           id: user.id
-        }, user.json(stringify = false, removeEmpty = true), {
+        }, user, {
           multi: true
         }, function(err, raw) {
           if (err) {
             reject(err);
           } else {
-            resolve(raw);
+            resolve(user);
           }
         });
       }).catch(err => {
@@ -97,7 +101,9 @@ const logoffUser = (userId) => {
       if (!userId ) {
         reject('no userId');
       }
-      getUser(userId).then(user => {
+      let user;
+      getUser(userId).then(item => {
+        user=item;
         user.setOnline(false);
         UserModel.update({
           id: user.id
@@ -107,7 +113,7 @@ const logoffUser = (userId) => {
           if (err) {
             reject(err);
           } else {
-            resolve(raw);
+            resolve(user);
           }
         });
       }).catch(err => {

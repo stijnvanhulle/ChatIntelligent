@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T20:41:53+01:00
+* @Last modified time: 2016-12-14T21:50:32+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -12,7 +12,7 @@ const {User: Model} = require('./mongo');
 class Emitter extends EventEmitter {}
 
 class User {
-  constructor({firstName, lastName, username, email, password}) {
+  constructor(firstName, lastName, username, email, password) {
     try {
       this.firstName = firstName;
       this.lastName = lastName;
@@ -130,11 +130,10 @@ class User {
         json['_id'] = undefined;
         json['__v'] = undefined;
       }
+        return JSON.parse(JSON.stringify(json));
     } catch (e) {
       console.log(e);
       json = JSON.stringify({});
-    } finally {
-      return json;
     }
   }
 
