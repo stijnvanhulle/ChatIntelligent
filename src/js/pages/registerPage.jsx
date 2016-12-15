@@ -1,22 +1,4 @@
-/**
-* @Author: Stijn Van Hulle <stijnvanhulle>
-* @Date:   2016-12-14T19:55:16+01:00
-* @Email:  me@stijnvanhulle.be
-* @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T21:24:29+01:00
-* @License: stijnvanhulle.be
-*/
-
-/**
-* @Author: Stijn Van Hulle <stijnvanhulle>
-* @Date:   2016-11-03T14:00:47+01:00
-* @Email:  me@stijnvanhulle.be
-* @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T21:24:29+01:00
-* @License: stijnvanhulle.be
-*/
-
-import React, {Component} from 'react';
+import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as userActions from '../actions/userActions';
@@ -46,10 +28,10 @@ class RegisterPage extends Component {
     const user = this.state.user;
     user[field] = e.target.value.toString();
 
-    if (field == `password` || field == `passwordRepeat`) {
+    if (field === `password` || field === `passwordRepeat`) {
       if (user[`password`] && user[`passwordRepeat`]) {
         const errors = this.state.errors;
-        if (user[`password`] != user[`passwordRepeat`]) {
+        if (user[`password`] !== user[`passwordRepeat`]) {
           errors.password = `Password not the same`;
           this.setState({errors});
         } else {
@@ -65,19 +47,24 @@ class RegisterPage extends Component {
   render() {
     return (
       <div>
-        <RegisterForm onChange={this.onUserChange} onSave={this.addUser} user={this.state.user} errors={this.state.errors} saving={this.state.saving} />
+        <RegisterForm handleChange={this.onUserChange} handleSave={this.addUser} user={this.state.user} errors={this.state.errors} saving={this.state.saving} />
       </div>
     );
   }
 }
 
-const mapStateToProps = (mapState, ownProps) => {
+//const mapStateToProps = (mapState, ownProps) => {
+const mapStateToProps = mapState => {
   return {users: mapState.users, friends: mapState.friends};
 };
 const mapDispatchToProps = dispatch => {
   return {
     actions: bindActionCreators(userActions, dispatch)
   };
+};
+
+RegisterPage.propTypes = {
+  actions: PropTypes.object.isRequired
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(RegisterPage);

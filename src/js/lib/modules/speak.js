@@ -13,7 +13,7 @@ export default function(text) {
 
   const msg = new SpeechSynthesisUtterance(text);
   msg.voice = voices.filter(function(voice) {
-    return voice.name == `Alex`;
+    return voice.name === `Alex`;
   })[0];
   synth.speak(msg);
 }

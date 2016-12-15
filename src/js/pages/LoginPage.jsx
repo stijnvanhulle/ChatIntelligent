@@ -68,13 +68,14 @@ class LoginPage extends Component {
   render() {
     return (
       <div>
-        <LoginForm onChange={this.onUserChange} onSave={this.loginUser} user={this.state.user} errors={this.state.errors} saving={this.state.saving} />
+        <LoginForm handleChange={this.onUserChange} handleSave={this.loginUser} user={this.state.user} errors={this.state.errors} saving={this.state.saving} />
       </div>
     );
   }
 }
 
-const mapStateToProps = (mapState, ownProps) => {
+//const mapStateToProps = (mapState, ownProps) => {
+const mapStateToProps = () => {
   return {};
 };
 const mapDispatchToProps = dispatch => {
