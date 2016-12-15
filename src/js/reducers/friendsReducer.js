@@ -3,7 +3,7 @@
 * @Date:   2016-12-09T15:33:00+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T20:30:25+01:00
+* @Last modified time: 2016-12-15T16:47:28+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -26,7 +26,7 @@ export default function friendsReducer(state = [], action) {
       }
       return item;
     });
-    break;
+    return newState;
   default:
     return state;
 

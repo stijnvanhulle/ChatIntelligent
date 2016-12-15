@@ -1,5 +1,13 @@
-@import 'reset';
+/**
+* @Author: Stijn Van Hulle <stijnvanhulle>
+* @Date:   2016-12-15T12:54:08+01:00
+* @Email:  me@stijnvanhulle.be
+* @Last modified by:   stijnvanhulle
+* @Last modified time: 2016-12-15T15:33:13+01:00
+* @License: stijnvanhulle.be
+*/
 
+@import 'reset';
 body {
   font-family: Roboto, Helvetica, Arial, sans-serif;
   font-size: 62.5%;
@@ -13,13 +21,11 @@ body {
 }
 
 .videos {
-
   &::after {
     content: '';
     display: table;
     clear: both;
   }
-
 }
 
 a {
@@ -62,7 +68,7 @@ video {
   transform: scaleX(-1);
 }
 
-.video:nth-child(1) > video {
+.video:nth-child(1)>video {
   height: 100%;
   width: auto;
 }
@@ -87,4 +93,10 @@ video {
 
 .disabled {
   opacity: .1;
+}
+
+.message {
+  display: block;
+  position: fixed;
+  z-index: 999;
 }

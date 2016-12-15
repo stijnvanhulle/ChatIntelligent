@@ -3,7 +3,7 @@
 * @Date:   2016-12-09T14:48:19+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T12:10:55+01:00
+* @Last modified time: 2016-12-15T15:47:46+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -59,7 +59,7 @@ const onMessageSocket = (io, socket, me) => {
     console.log('Users:', users.length, " ", users);
   });
 
-  socket.on(socketNames.SEARCH, (obj) => {
+  socket.on(socketNames.SEARCH, () => {
     const stranger = search(users, me);
     if (stranger) {
 

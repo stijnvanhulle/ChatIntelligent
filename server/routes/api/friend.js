@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T12:30:37+01:00
+* @Last modified time: 2016-12-15T17:13:08+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -77,7 +77,9 @@ module.exports = [
         let {friendId} = request.payload;
 
         userController.acceptFriend(userId, friendId).then((doc) => {
-          reply(doc);
+          return userController.getFriend(userId, friendId);
+        }).then(user => {
+          reply(user);
         }).catch(err => {
           console.log(err);
           reply(new Error(err));

@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T13:07:22+01:00
+* @Last modified time: 2016-12-15T15:43:27+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -16,6 +16,7 @@ import annNames from '../lib/const/annNames';
 import speak from '../lib/modules/speak';
 import url from '../actions/lib/url';
 import {setParams} from '../lib/functions';
+import global from '../lib/const/global';
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -99,7 +100,7 @@ class App extends Component {
 
   }
   loadSocket = () => {
-    this.socket = io(`/`);
+    this.socket = io(global.url);
     this.socket.on(socketNames.CONNECT, () => {
       this.initPeer();
 
@@ -125,11 +126,17 @@ class App extends Component {
     this.socket.on(socketNames.FOUND, this.handleWSFound);
     this.socket.on(socketNames.NEW_FRIEND, this.handleWSNewFriend);
 
+    global.socket = this.socket;
     window.socket = this.socket;
   }
 
+  handleWSNewFriend = obj => {
+    console.log(obj);
+    global.events.emit(`new_friend`, obj);
+
+  }
+
   handleStrangerStream = strangerStream => {
-    annyang.trigger(annNames.ONLINE);
     this.props.actions.addStrangerStream(strangerStream);
     this.setState({strangerStream});
   }
@@ -141,9 +148,7 @@ class App extends Component {
   }
 
   // WS
-  handleWSNewFriend = obj => {
-    console.log(obj);
-  }
+
   handleWSpeechPost = text => {
     speak(text);
   }
@@ -194,6 +199,8 @@ class App extends Component {
   }
 
   initStream() {
+    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
     navigator.getUserMedia({
       video: true,
       audio: true
@@ -203,9 +210,10 @@ class App extends Component {
   // EVENTS
 
   render() {
+    const childrenWithProps = React.cloneElement(this.props.children, this.props);
     return (
       <main>
-        {this.props.children}
+        {childrenWithProps}
       </main>
     );
 

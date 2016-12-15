@@ -3,7 +3,7 @@
 * @Date:   2016-12-14T19:55:16+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T13:00:27+01:00
+* @Last modified time: 2016-12-15T15:38:38+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -12,7 +12,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T13:00:27+01:00
+* @Last modified time: 2016-12-15T15:38:38+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -45,11 +45,10 @@ class LoginPage extends Component {
         const data = response.data;
         user = data;
         if (user.id) {
+          console.log(`login`, data);
           localStorage.setItem(`userId`, user.id);
+          this.props.router.push(`/`);
         }
-
-        console.log(`login`, data);
-        this.context.router.push(`/`);
 
       }).catch(err => {
         throw err;
@@ -68,7 +67,7 @@ class LoginPage extends Component {
   render() {
     return (
       <div>
-        <LoginForm handleChange={this.onUserChange} handleSave={this.loginUser} user={this.state.user} errors={this.state.errors} saving={this.state.saving} />
+        <LoginForm onChange={this.onUserChange} onSave={this.loginUser} user={this.state.user} errors={this.state.errors} saving={this.state.saving} />
       </div>
     );
   }

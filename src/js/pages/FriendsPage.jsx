@@ -3,7 +3,7 @@
 * @Date:   2016-12-14T19:55:16+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T12:19:50+01:00
+* @Last modified time: 2016-12-15T16:02:59+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -12,7 +12,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T12:19:50+01:00
+* @Last modified time: 2016-12-15T16:02:59+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -54,7 +54,7 @@ class FriendsPage extends Component {
     console.log(`new friend ${this.state.user}`);
     //login
     const user = this.state.user;
-    if (user.username) {
+    if (user.username && this.state.user.id) {
       this.props.actions.addFriend(this.state.meId, this.state.user.id).then(() => {
         console.log(`ok`);
       }).catch(err => {

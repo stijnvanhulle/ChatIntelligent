@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T12:35:00+01:00
+* @Last modified time: 2016-12-15T17:19:17+01:00
 * @License: stijnvanhulle.be
 */
 const {calculateId} = require('./lib/functions');
@@ -127,6 +127,35 @@ const getFriends = (userId) => {
   });
 
 };
+const getFriend = (userId, userid2) => {
+  return new Promise((resolve, reject) => {
+    try {
+      if (!userId || !userid2)
+        reject('No userId for user');
+
+      FriendModel.findOne({user1: userId, user2: userid2}).exec(function(err, doc) {
+        if (err) {
+          reject(err);
+        } else {
+          if (doc) {
+            let friend = new Friend();
+            friend.load(doc);
+            resolve(friend);
+          } else {
+            resolve(null);
+          }
+
+        }
+      });
+
+    } catch (e) {
+      console.log(e);
+      reject(e);
+    }
+
+  });
+
+};
 
 module.exports.addUser = (user) => {
   return new Promise((resolve, reject) => {
@@ -172,17 +201,24 @@ module.exports.addFriend = (friend) => {
         //reject('users the same');
         //return;
       }
-
-      calculateId(FriendModel).then(id => {
-        friend.id = id;
-        friend.save().then((doc) => {
-          friend.date = doc.date;
-          const obj = friend.json(stringify = false, removeEmpty = true)
-          io.emit(socketNames.NEW_FRIEND, obj);
-          resolve(doc);
-        }).catch(err => {
-          reject(err);
-        });
+      getFriend(friend.user1, friend.user2).then(friend => {
+        if (!friend) {
+          calculateId(FriendModel).then(id => {
+            friend.id = id;
+            friend.save().then((doc) => {
+              friend.date = doc.date;
+              const obj = friend.json(stringify = false, removeEmpty = true)
+              io.emit(socketNames.NEW_FRIEND, obj);
+              resolve(doc);
+            }).catch(err => {
+              reject(err);
+            });
+          });
+        } else {
+          reject('Friend already exist');
+        }
+      }).catch(err => {
+        reject(err);
       });
 
     } catch (e) {
@@ -197,14 +233,15 @@ module.exports.addFriend = (friend) => {
 const updateFriend = (userId1, userId2) => {
   return new Promise((resolve, reject) => {
     try {
+      if (!userId1 || !userId2) {
+        reject('no users');
+      }
       FriendModel.update({
         user1: userId1,
         user2: userId2
       }, {
-        isActivated: true
-      }, {
-        multi: true
-      }, function(err, raw) {
+        isConfirmed: true
+      }, {}, function(err, raw) {
         if (err) {
           reject(err);
         } else {
@@ -254,9 +291,11 @@ module.exports.acceptFriend = (userId1, userId2) => {
         user2;
       getUser(userId1).then(item => {
         user1 = item;
+
         return getUser(userId2);
       }).then(item => {
         user2 = item;
+        console.log('user1', user1, 'user2', user2);
         if (user1 && user2) {
           return updateFriend(user1.id, user2.id);
         } else {
@@ -286,3 +325,4 @@ module.exports.getOnlineUsers = getOnlineUsers;
 module.exports.updateUser = updateUser;
 module.exports.getFriends = getFriends;
 module.exports.getUserByUsername = getUserByUsername;
+module.exports.getFriend = getFriend;

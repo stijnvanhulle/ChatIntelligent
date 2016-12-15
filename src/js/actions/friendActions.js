@@ -3,7 +3,7 @@
 * @Date:   2016-12-09T15:35:26+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T12:59:42+01:00
+* @Last modified time: 2016-12-15T17:17:02+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -47,7 +47,7 @@ export function addFriend(meId, friendId) {
 export function acceptFriend(meId, friendId) {
   return dispatch => {
     try {
-      return axios.post(setParams(url.FRIEND, meId), {friendId: friendId}).then(response => {
+      return axios.post(setParams(url.FRIEND_ACCEPT, meId), {friendId: friendId}).then(response => {
         const data = response.data;
         dispatch(acceptFriend_SUCCESS(data));
       }).catch(err => {
