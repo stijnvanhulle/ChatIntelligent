@@ -24,7 +24,9 @@ const Video = ({stream, muted}) => {
 
 Video.propTypes = {
   meta: PropTypes.string,
-  stream: PropTypes.object
+  stream: PropTypes.object,
+  muted: PropTypes.boolean
+
 };
 
 export default Video;

@@ -23,7 +23,7 @@ export const setSuccessAndFail = item => {
 
   for (let i = 0;i < keys.length;i ++) {
     const key = keys[i];
-    if (key.toLowerCase().indexOf(`create`) != - 1 || key.toLowerCase().indexOf(`load`) != - 1 || key.toLowerCase().indexOf(`update`) != - 1 || key.toLowerCase().indexOf(`get`) != - 1 || key.toLowerCase().indexOf(`add`) != - 1) {
+    if (key.toLowerCase().indexOf(`create`) !== - 1 || key.toLowerCase().indexOf(`load`) !== - 1 || key.toLowerCase().indexOf(`update`) !== - 1 || key.toLowerCase().indexOf(`get`) !== - 1 || key.toLowerCase().indexOf(`add`) !== - 1) {
       if (!item[`${key  }_SUCCESS`]) {
         item[`${key  }_SUCCESS`] = `${item[key]  }_success`;
       }

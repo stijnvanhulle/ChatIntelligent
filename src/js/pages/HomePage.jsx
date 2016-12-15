@@ -34,13 +34,19 @@ class HomePage extends Component {
 
 }
 
-const mapStateToProps = (mapState, ownProps) => {
+//const mapStateToProps = (mapState, ownProps) => {
+const mapStateToProps = mapState => {
   return {youStream: mapState.youStream, strangerStream: mapState.strangerStream, users: mapState.users};
 };
 const mapDispatchToProps = dispatch => {
   return {
     actions: bindActionCreators(streamActions, dispatch)
   };
+};
+
+HomePage.propTypes = {
+  youStream: PropTypes.object.isRequired,
+  strangerStream: PropTypes.object.isRequired
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomePage);

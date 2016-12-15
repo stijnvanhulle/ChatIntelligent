@@ -9,6 +9,7 @@
 
 import React, {Component, PropTypes} from 'react';
 import Peer from 'peerjs';
+import annyang from 'annyang';
 import io from 'socket.io-client';
 import socketNames from '../lib/const/socketNames';
 import annNames from '../lib/const/annNames';
@@ -51,7 +52,7 @@ class App extends Component {
 
       annyang.addCallback(`result`, userSaid => {
         const text = userSaid[0];
-        if (text == annNames.OK) {
+        if (text === annNames.OK) {
           canListen = true;
         }
         setTimeout(function() {
@@ -61,7 +62,7 @@ class App extends Component {
         console.log(userSaid, canListen);
         if (canListen) {
           self.socket.emit(socketNames.SPEECH, text);
-          if (text != annNames.OK) {
+          if (text !== annNames.OK) {
             canListen = false;
           }
 
@@ -178,10 +179,12 @@ class App extends Component {
 }
 
 App.propTypes = {
-  children: PropTypes.object.isRequired
+  children: PropTypes.object.isRequired,
+  actions: PropTypes.object.isRequired
 };
 
-const mapStateToProps = (mapState, ownProps) => {
+//const mapStateToProps = (mapState, ownProps) => {
+const mapStateToProps = mapState => {
   return {youStream: mapState.youStream, strangerStream: mapState.strangerStream};
 };
 const mapDispatchToProps = dispatch => {

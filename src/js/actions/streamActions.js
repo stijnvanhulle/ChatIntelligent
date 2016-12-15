@@ -7,7 +7,7 @@
 * @License: stijnvanhulle.be
 */
 
-import axios from 'axios';
+//import axios from 'axios';
 import actionsUrl from './lib/actionsUrl';
 
 export function loadStrangerStream(stream) {
