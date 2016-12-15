@@ -3,11 +3,12 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T19:59:02+01:00
+* @Last modified time: 2016-12-15T20:13:44+01:00
 * @License: stijnvanhulle.be
 */
 const {calculateId} = require('./lib/functions');
 const {io} = require('../lib/const/global');
+const {promiseFor} = require('../lib/functions');
 const socketNames = require('../lib/const/socketNames');
 const {User, Friend} = require('../models');
 const {User: UserModel, Friend: FriendModel} = require('../models/mongo');
@@ -105,17 +106,34 @@ const getFriends = (userId) => {
       if (!userId)
         reject('No userId for user');
 
+      const promise = (item) => {
+        return new Promise((resolve, reject) => {
+          let friend = new Friend();
+          friend.load(item);
+
+          getUser(item.user1).then(user => {
+            friend.user1 = user;
+            return getUser(item.user2);
+          }).then(user => {
+            friend.user2 = user;
+            resolve(friend.json(stringify = false, removeEmpty = true));
+          }).catch(err => {
+            reject(err);
+          });
+
+        });
+      };
+
       FriendModel.find({user1: userId}).exec(function(err, docs) {
         if (err) {
           reject(err);
         } else {
-          console.log(docs);
-          let friends = docs.map((item) => {
-            let friend = new Friend();
-            friend.load(item);
-            return friend;
+          promiseFor(promise, docs).then(friends => {
+            resolve(friends);
+          }).catch(err => {
+            reject(err);
           });
-          resolve(friends);
+
         }
       });
 

@@ -3,7 +3,7 @@
 * @Date:   2016-12-14T19:55:16+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T19:51:01+01:00
+* @Last modified time: 2016-12-15T20:15:59+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -12,7 +12,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T19:51:01+01:00
+* @Last modified time: 2016-12-15T20:15:59+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -86,12 +86,27 @@ class FriendsPage extends Component {
     return this.setState({user: user});
   }
 
+  messageView = (item, i) => {
+    let confirmed;
+    if (item.isConfirmed) {
+      confirmed = `confirmed`;
+    } else {
+      confirmed = `not confirmed`;
+    }
+    return (
+      <div key={i}>{item.user2.firstName} {item.user2.lastName}
+        -- {confirmed}</div>
+    );
+  }
+
   render() {
     console.log(this.props.friends);
     return (
       <div>
         <AddFriendForm onChange={this.onFriendChange} onSave={this.findFriend} user={this.state.user} errors={this.state.errors} saving={this.state.saving} />
         <button onClick={this.addFriend}>Add</button>
+
+        {this.props.friends.map((item, i) => this.messageView(item, i))}
       </div>
     );
   }
