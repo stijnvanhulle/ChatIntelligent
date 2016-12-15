@@ -74,7 +74,8 @@ class LoginPage extends Component {
   }
 }
 
-const mapStateToProps = (mapState, ownProps) => {
+//const mapStateToProps = (mapState, ownProps) => {
+const mapStateToProps = () => {
   return {};
 };
 const mapDispatchToProps = dispatch => {
