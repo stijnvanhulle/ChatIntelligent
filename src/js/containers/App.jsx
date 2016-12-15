@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T19:16:02+01:00
+* @Last modified time: 2016-12-15T19:54:28+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -32,6 +32,7 @@ class App extends Component {
     speak(`Welcome on alo`);
   }
   state = {
+    userId: null,
     youStream: null,
     strangerStream: null,
     canListen: false
@@ -45,6 +46,7 @@ class App extends Component {
     try {
       userId = JSON.parse(localStorage.getItem(`userId`));
       if (userId) {
+        this.state.userId = parseFloat(userId);
         axios.get(setParams(url.USER_ONLINE, parseFloat(userId))).then(response => {
           const data = response.data;
           localStorage.setItem(`isOnline`, data.online);
@@ -136,8 +138,10 @@ class App extends Component {
   }
 
   handleWSNewFriend = obj => {
-    console.log(obj);
-    global.events.emit(`new_friend`, obj);
+    console.log(`new friend`, obj);
+    if (obj.user2 == this.state.userId) {
+      global.events.emit(`new_friend`, obj);
+    }
 
   }
 

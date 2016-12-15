@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T17:19:17+01:00
+* @Last modified time: 2016-12-15T19:59:02+01:00
 * @License: stijnvanhulle.be
 */
 const {calculateId} = require('./lib/functions');
@@ -209,13 +209,15 @@ module.exports.addFriend = (friend) => {
               friend.date = doc.date;
               const obj = friend.json(stringify = false, removeEmpty = true)
               io.emit(socketNames.NEW_FRIEND, obj);
-              resolve(doc);
+              resolve(obj);
             }).catch(err => {
               reject(err);
             });
           });
         } else {
-          reject('Friend already exist');
+          const obj = friend.json(stringify = false, removeEmpty = true)
+          io.emit(socketNames.NEW_FRIEND, obj);
+          resolve(obj);
         }
       }).catch(err => {
         reject(err);
@@ -295,7 +297,6 @@ module.exports.acceptFriend = (userId1, userId2) => {
         return getUser(userId2);
       }).then(item => {
         user2 = item;
-        console.log('user1', user1, 'user2', user2);
         if (user1 && user2) {
           return updateFriend(user1.id, user2.id);
         } else {
@@ -308,6 +309,8 @@ module.exports.acceptFriend = (userId1, userId2) => {
         } else {
           reject('somehting wrong with user1');
         }
+      }).then(result => {
+        resolve(result);
       }).catch(err => {
         reject(err);
       });
