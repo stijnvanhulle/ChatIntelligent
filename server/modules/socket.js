@@ -3,7 +3,7 @@
 * @Date:   2016-12-09T14:48:19+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T21:57:17+01:00
+* @Last modified time: 2016-12-15T12:10:55+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -13,6 +13,7 @@ const Chance = require('chance');
 const chance = new Chance();
 
 const global = require('../lib/const/global');
+const loginController = require('../controllers/loginController');
 const socketNames = require('../lib/const/socketNames');
 
 const apiai = require('apiai');
@@ -21,23 +22,44 @@ const app = apiai("bcdae007f870445c9b1fafb0b5177bae");
 let users = [];
 
 const onMessageSocket = (io, socket, me) => {
-  socket.on(socketNames.ONLINE, obj => {});
+  socket.on(socketNames.ONLINE, obj => {
+    if (obj && obj.userId) {
+      me.userId = obj.userId;
+
+      if (me.userId) {
+        loginController.loginUserId(me.userId).then(ok => {
+          if (ok) {
+            console.log('Logged on user ', me);
+            updateMe(users, me);
+            console.log(users);
+          }
+        }).catch(err => {
+          console.log(err);
+        });
+      }
+
+    }
+
+  });
 
   socket.on(socketNames.DISCONNECT, () => {
     const {id: socketId} = socket;
     users = users.filter(c => c.socketId !== socketId);
     users = cleanPaired(users, me)
-    console.log('Users:', users.length, " ", users);
+    if (me.userId) {
+      loginController.logoffUser(me.userId).then(ok => {
+        if (ok) {
+          console.log('Logged off user ', me);
+        }
+      }).catch(err => {
+        console.log(err);
+      });
+    }
 
+    console.log('Users:', users.length, " ", users);
   });
 
   socket.on(socketNames.SEARCH, (obj) => {
-    if (obj && obj.userId) {
-      me.userId = obj.userId;
-      updateMe(users, me);
-      console.log(users);
-    }
-
     const stranger = search(users, me);
     if (stranger) {
 

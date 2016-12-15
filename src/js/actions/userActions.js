@@ -3,13 +3,16 @@
 * @Date:   2016-12-09T15:35:26+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T20:22:25+01:00
+* @Last modified time: 2016-12-15T11:07:49+01:00
 * @License: stijnvanhulle.be
 */
 
 import axios from 'axios';
-import url from './lib/url';
+import {setUrl, setParams} from '../lib/functions';
+import _url from './lib/url';
 import actionsUrl from './lib/actionsUrl';
+
+const url = setUrl(_url);
 
 export function createUser_SUCCESS(user) {
   return {type: actionsUrl.CREATE_USER_SUCCESS, user};

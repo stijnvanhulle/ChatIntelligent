@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T21:50:37+01:00
+* @Last modified time: 2016-12-15T12:35:38+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -13,27 +13,23 @@ class Emitter extends EventEmitter {}
 
 class Friend {
   constructor(user1, user2) {
-    this.load({user1, user2});
+    try {
+      this.load({user1, user2});
+    } catch (e) {
+      console.log(e);
+    }
+
     this.reset();
   }
 
   reset() {
-    this.id = null;
     this.model = Model;
     this.date = null;
-    this.isActivated = false;
+    this.isConfirmed = false;
     this.events = new Emitter();
   }
 
-
-
-  load({
-    user1,
-    user2,
-    date,
-    id,
-    isActivated
-  }) {
+  load({user1, user2, date, isConfirmed}) {
     try {
       this.user1 = user1
         ? parseFloat(user1)
@@ -41,17 +37,12 @@ class Friend {
       this.user2 = user2
         ? parseFloat(user2)
         : this.user2;
-      this.id = id
-        ? id
-        : this.id;
       this.date = date
         ? date
         : this.date;
-      this.isActivated = isActivated
-        ? isActivated
-        : this.isActivated;
-
-
+      this.isConfirmed = isConfirmed
+        ? isConfirmed
+        : this.isConfirmed;
 
     } catch (e) {
       console.log(e);
@@ -104,7 +95,7 @@ class Friend {
         json['_id'] = undefined;
         json['__v'] = undefined;
       }
-        return JSON.parse(JSON.stringify(json));
+      return JSON.parse(JSON.stringify(json));
     } catch (e) {
       console.log(e);
       json = JSON.stringify({});

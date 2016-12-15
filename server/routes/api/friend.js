@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T21:42:34+01:00
+* @Last modified time: 2016-12-15T12:30:37+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -14,6 +14,30 @@ const {promiseFor} = require('../../lib/functions');
 
 module.exports = [
   {
+    method: `GET`,
+    path: url.FRIEND,
+    config: {
+      auth: false
+    },
+    handler: function(request, reply) {
+      const {userController} = require('../../controllers');
+      try {
+        let userId = request.params.id;
+
+        userController.getFriends(userId).then((friends) => {
+          reply(friends);
+        }).catch(err => {
+          console.log(err);
+          reply(new Error(err));
+        });
+      } catch (e) {
+        console.log(e);
+        reply(e);
+      }
+
+    }
+
+  }, {
     method: `POST`,
     path: url.FRIEND,
     config: {
@@ -22,8 +46,9 @@ module.exports = [
     handler: function(request, reply) {
       const {userController} = require('../../controllers');
       try {
-        let {userId1, userId2} = request.payload;
-        const friend = new Friend(userId1, userId2);
+        let userId = request.params.id;
+        let {friendId} = request.payload;
+        const friend = new Friend(userId, friendId);
 
         userController.addFriend(friend).then((doc) => {
           friend.date = doc.date;
@@ -40,7 +65,7 @@ module.exports = [
     }
 
   }, {
-    method: `GET`,
+    method: `POST`,
     path: url.FRIEND_ACCEPT,
     config: {
       auth: false
@@ -48,9 +73,10 @@ module.exports = [
     handler: function(request, reply) {
       const {userController} = require('../../controllers');
       try {
-        let {userId1, userId2} = request.payload;
+        let userId = request.params.id;
+        let {friendId} = request.payload;
 
-        userController.acceptFriend(userId1, userId2).then((doc) => {
+        userController.acceptFriend(userId, friendId).then((doc) => {
           reply(doc);
         }).catch(err => {
           console.log(err);

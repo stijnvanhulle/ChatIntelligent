@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T17:36:33+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T16:06:33+01:00
+* @Last modified time: 2016-12-15T12:22:22+01:00
  * @License: stijnvanhulle.be
  */
 const mongoose = require("mongoose");
@@ -19,7 +19,7 @@ module.exports.load = () => {
     return db.models[MODEL];
   }
 
-  const schema = new Schema({date: String, user1: Number, user2: Number, isActivated:Boolean});
+  const schema = new Schema({date: String, user1: Number, user2: Number, isConfirmed:Boolean});
 
   schema.pre('save', function(next) {
     this.date = moment().valueOf();

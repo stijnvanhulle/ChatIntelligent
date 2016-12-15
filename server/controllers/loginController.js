@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T21:52:01+01:00
+* @Last modified time: 2016-12-15T12:10:36+01:00
 * @License: stijnvanhulle.be
 */
 const {calculateId} = require('./lib/functions');
@@ -60,7 +60,39 @@ const getUserWithPassword = (username, password) => {
   });
 
 };
+const loginUserId = (userId) => {
+  return new Promise((resolve, reject) => {
+    try {
+      if (!userId) {
+        reject('no userid');
+      }
+      let user;
+      getUser(userId).then(item => {
+        user=item;
+        user.setOnline(true);
+        user=user.json(stringify = false, removeEmpty = true);
+        console.log(user);
+        UserModel.update({
+          id: user.id
+        }, user, {
+          multi: true
+        }, function(err, raw) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(user);
+          }
+        });
+      }).catch(err => {
+        reject(err);
+      });
+    } catch (e) {
+      console.log(e);
+      reject(e);
+    }
 
+  });
+};
 const loginUser = (username, password) => {
   return new Promise((resolve, reject) => {
     try {
@@ -128,4 +160,5 @@ const logoffUser = (userId) => {
 };
 
 module.exports.loginUser = loginUser;
+module.exports.loginUserId = loginUserId;
 module.exports.logoffUser = logoffUser;

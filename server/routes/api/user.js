@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T21:42:21+01:00
+* @Last modified time: 2016-12-15T11:42:41+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -14,6 +14,58 @@ const {promiseFor} = require('../../lib/functions');
 
 module.exports = [
   {
+    method: `GET`,
+    path: url.USER_ONLINE,
+    config: {
+      auth: false
+    },
+    handler: function(request, reply) {
+      const {userController} = require('../../controllers');
+      try {
+        let userId = request.params.id;
+
+        userController.getUser(userId).then((user) => {
+          if (user.online) {
+            reply({online: true});
+          } else {
+            reply({online: false});
+          }
+        }).catch(err => {
+          console.log(err);
+          reply(new Error(err));
+        });
+      } catch (e) {
+        console.log(e);
+        reply(e);
+      }
+
+    }
+
+  }, {
+    method: `GET`,
+    path: url.USER,
+    config: {
+      auth: false
+    },
+    handler: function(request, reply) {
+      const {userController} = require('../../controllers');
+      try {
+        const username = request.query.username;
+
+        userController.getUserByUsername(username).then((user) => {
+          reply(user);
+        }).catch(err => {
+          console.log(err);
+          reply(new Error(err));
+        });
+      } catch (e) {
+        console.log(e);
+        reply(e);
+      }
+
+    }
+
+  }, {
     method: `POST`,
     path: url.USER,
     config: {
@@ -66,7 +118,7 @@ module.exports = [
 
   }, {
     method: `GET`,
-    path: url.USER_ONLINE,
+    path: url.USERS_ONLINE,
     config: {
       auth: false
     },

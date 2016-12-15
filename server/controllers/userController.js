@@ -3,11 +3,12 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T21:31:39+01:00
+* @Last modified time: 2016-12-15T12:35:00+01:00
 * @License: stijnvanhulle.be
 */
 const {calculateId} = require('./lib/functions');
-
+const {io} = require('../lib/const/global');
+const socketNames = require('../lib/const/socketNames');
 const {User, Friend} = require('../models');
 const {User: UserModel, Friend: FriendModel} = require('../models/mongo');
 
@@ -29,8 +30,12 @@ const getUserByUsername = (username) => {
               return user;
             });
           }
+          if (users.length == 1) {
+            resolve(users[0]);
+          } else {
+            resolve(users);
+          }
 
-          resolve(users);
         }
       });
 
@@ -71,8 +76,6 @@ const getUser = (id) => {
 const getOnlineUsers = () => {
   return new Promise((resolve, reject) => {
     try {
-      if (!id)
-        reject('No id for user');
 
       UserModel.find({online: true}).exec(function(err, docs) {
         if (err) {
@@ -84,6 +87,35 @@ const getOnlineUsers = () => {
             return user;
           });
           resolve(users);
+        }
+      });
+
+    } catch (e) {
+      console.log(e);
+      reject(e);
+    }
+
+  });
+
+};
+
+const getFriends = (userId) => {
+  return new Promise((resolve, reject) => {
+    try {
+      if (!userId)
+        reject('No userId for user');
+
+      FriendModel.find({user1: userId}).exec(function(err, docs) {
+        if (err) {
+          reject(err);
+        } else {
+          console.log(docs);
+          let friends = docs.map((item) => {
+            let friend = new Friend();
+            friend.load(item);
+            return friend;
+          });
+          resolve(friends);
         }
       });
 
@@ -135,10 +167,18 @@ module.exports.addFriend = (friend) => {
       if (!friend instanceof Friend) {
         throw new Error('No friend');
       }
+      if (friend.user1 == friend.user2) {
+        //TODO: production reject
+        //reject('users the same');
+        //return;
+      }
 
       calculateId(FriendModel).then(id => {
         friend.id = id;
         friend.save().then((doc) => {
+          friend.date = doc.date;
+          const obj = friend.json(stringify = false, removeEmpty = true)
+          io.emit(socketNames.NEW_FRIEND, obj);
           resolve(doc);
         }).catch(err => {
           reject(err);
@@ -244,3 +284,5 @@ module.exports.acceptFriend = (userId1, userId2) => {
 module.exports.getUser = getUser;
 module.exports.getOnlineUsers = getOnlineUsers;
 module.exports.updateUser = updateUser;
+module.exports.getFriends = getFriends;
+module.exports.getUserByUsername = getUserByUsername;

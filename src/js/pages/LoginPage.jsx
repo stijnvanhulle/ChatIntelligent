@@ -3,7 +3,7 @@
 * @Date:   2016-12-14T19:55:16+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T21:53:08+01:00
+* @Last modified time: 2016-12-15T12:02:17+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -12,7 +12,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T21:53:08+01:00
+* @Last modified time: 2016-12-15T12:02:17+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -49,6 +49,8 @@ class LoginPage extends Component {
         }
 
         console.log(`login`, data);
+        this.context.router.push(`/`);
+
       }).catch(err => {
         throw err;
       });

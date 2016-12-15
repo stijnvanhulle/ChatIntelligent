@@ -3,16 +3,19 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T22:00:32+01:00
+* @Last modified time: 2016-12-15T12:26:55+01:00
 * @License: stijnvanhulle.be
 */
 
 import React, {Component, PropTypes} from 'react';
 import Peer from 'peerjs';
+import axios from 'axios';
 import io from 'socket.io-client';
 import socketNames from '../lib/const/socketNames';
 import annNames from '../lib/const/annNames';
 import speak from '../lib/modules/speak';
+import url from '../actions/lib/url';
+import {setParams} from '../lib/functions';
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -24,6 +27,7 @@ class App extends Component {
     super(props, context);
     //this.loadSocket();
     this.loadAnn();
+    this.loadUser();
     speak(`Welcome on alo`);
   }
   state = {
@@ -34,6 +38,25 @@ class App extends Component {
 
   componentDidMount() {
     this.initStream();
+  }
+  loadUser = () => {
+    let userId;
+    try {
+      userId = JSON.parse(localStorage.getItem(`userId`));
+      if (userId) {
+        axios.get(setParams(url.USER_ONLINE, parseFloat(userId))).then(response => {
+          const data = response.data;
+          localStorage.setItem(`isOnline`, data.online);
+        }).catch(err => {
+          throw err;
+        });
+      } else {
+        this.props.router.push(`/login`);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
   }
 
   loadAnn = () => {
@@ -79,9 +102,28 @@ class App extends Component {
     this.socket = io(`/`);
     this.socket.on(socketNames.CONNECT, () => {
       this.initPeer();
+
+      let userId;
+      try {
+        let obj = {};
+        userId = JSON.parse(localStorage.getItem(`userId`));
+        if (userId) {
+          obj = {
+            userId: parseFloat(userId)
+          };
+          this.socket.emit(socketNames.ONLINE, obj);
+        } else {
+          console.log(`not logged in`);
+        }
+
+      } catch (e) {
+        console.log(e);
+      }
+
     });
     this.socket.on(socketNames.SPEECH_POST, this.handleWSpeechPost);
     this.socket.on(socketNames.FOUND, this.handleWSFound);
+    this.socket.on(socketNames.NEW_FRIEND, this.handleWSNewFriend);
 
     window.socket = this.socket;
   }
@@ -99,6 +141,9 @@ class App extends Component {
   }
 
   // WS
+  handleWSNewFriend = obj => {
+    console.log(obj);
+  }
   handleWSpeechPost = text => {
     speak(text);
   }
@@ -124,16 +169,7 @@ class App extends Component {
       secure: true
     });
     this.peer.on(`open`, () => {
-      let obj = {};
-      const userId = localStorage.getItem(`userId`);
-      if (userId) {
-        obj = {
-          userId: parseFloat(userId)
-        };
-      } else {
-        console.log(`not logged in`);
-      }
-      this.socket.emit(`search`, obj);
+      this.socket.emit(`search`);
     });
 
     this.peer.on(`call`, call => {
