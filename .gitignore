@@ -6,3 +6,8 @@ Session.vim
 *~
 .DS_Store
 node_modules
+<<<<<<< .merge_file_08zw8B
+=======
+server/public
+server/mongodb
+>>>>>>> .merge_file_pgX9i2

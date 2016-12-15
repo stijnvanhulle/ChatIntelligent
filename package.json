@@ -6,14 +6,22 @@
     "start": "npm run serve",
     "serve": "forever .",
     "clean": "rimraf ./server/public/",
-    "production": "npm run clean && NODE_ENV=production webpack -p"
+    "production": "npm run clean && NODE_ENV=production webpack -p",
+    "mongo": "mkdir server/mongodb && yarn run mongodb",
+    "mongodb": "sudo mongod --dbpath server/mongodb --port 3001"
   },
   "main": "server/index.js",
   "engines": {
     "node": "6.8.0"
   },
   "dependencies": {
+    "api.ai": "^1.0.2",
+    "apiai": "^3.0.3",
+    "axios": "^0.15.3",
+    "chance": "^1.0.4",
+    "chance.js": "0.0.1",
     "dotenv": "^2.0.0",
+    "eventemitter2": "^2.2.1",
     "forever": "^0.15.2",
     "glob": "^7.1.1",
     "hapi": "^15.1.1",
@@ -21,7 +29,18 @@
     "joi": "^9.2.0",
     "joi-objectid": "^2.0.0",
     "lodash": "^4.16.4",
-    "socket.io": "^1.6.0"
+    "mongoose": "^4.7.2",
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2",
+    "react-native-speech": "^0.1.2",
+    "react-redux": "^4.4.5",
+    "react-router": "^3.0.0",
+    "redux": "^3.6.0",
+    "redux-immutable-state-invariant": "^1.2.4",
+    "redux-thunk": "^2.1.0",
+    "save": "^2.3.0",
+    "socket.io": "^1.7.1",
+    "socket.io-client": "^1.7.1"
   },
   "devDependencies": {
     "babel-core": "^6.17.0",

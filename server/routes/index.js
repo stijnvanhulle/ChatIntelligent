@@ -1,20 +1,30 @@
+/**
+* @Author: Stijn Van Hulle <stijnvanhulle>
+* @Date:   2016-12-13T21:05:38+01:00
+* @Email:  me@stijnvanhulle.be
+* @Last modified by:   stijnvanhulle
+* @Last modified time: 2016-12-14T16:58:41+01:00
+* @License: stijnvanhulle.be
+*/
+
+
+
+const fs = require(`fs`);
 const path = require(`path`);
-const glob = require(`glob`);
+
 
 module.exports.register = (server, options, next) => {
 
-  const g = path.join(__dirname, `**/*.js`);
+  fs.readdirSync(__dirname).forEach(file => {
 
-  glob(g, {ignore: [`**/*/index.js`, `**/*/_*.js`]}, (err, files) => {
+    if (file === `index.js` || !file.endsWith(`.js`) || file.startsWith(`_`)) return;
 
-    files.forEach(f => {
+    const mod = {};
+    mod[path.basename(file, `.js`)] = require(path.join(__dirname, file));
 
-      const mod = {};
-      mod[path.basename(f, `.js`)] = require(f);
-
-      for (const route in mod) server.route(mod[route]);
-
-    });
+    for(const route in mod) {
+      server.route(mod[route]);
+    }
 
   });
 

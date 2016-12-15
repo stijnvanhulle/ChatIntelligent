@@ -1,16 +1,119 @@
-import React, {Component} from 'react';
-import IO from 'socket.io-client';
-import Peer from 'peerjs';
+/**
+* @Author: Stijn Van Hulle <stijnvanhulle>
+* @Date:   2016-12-02T09:44:31+01:00
+* @Email:  me@stijnvanhulle.be
+* @Last modified by:   stijnvanhulle
+* @Last modified time: 2016-12-14T22:00:32+01:00
+* @License: stijnvanhulle.be
+*/
 
-import Video from '../components/Video';
+import React, {Component, PropTypes} from 'react';
+import Peer from 'peerjs';
+import io from 'socket.io-client';
+import socketNames from '../lib/const/socketNames';
+import annNames from '../lib/const/annNames';
+import speak from '../lib/modules/speak';
+
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import * as streamActions from '../actions/streamActions';
 
 class App extends Component {
 
+  constructor(props, context) {
+    super(props, context);
+    //this.loadSocket();
+    this.loadAnn();
+    speak(`Welcome on alo`);
+  }
   state = {
-    youStream: undefined,
-    strangerStream: undefined
+    youStream: null,
+    strangerStream: null,
+    canListen: false
   }
 
+  componentDidMount() {
+    this.initStream();
+  }
+
+  loadAnn = () => {
+    let canListen = false;
+    const self = this;
+    if (annyang) {
+      // Let's define a command.
+      const commands = {};
+      commands[annNames.OK] = () => {
+        canListen = true;
+      };
+
+      // Add our commands to annyang
+      annyang.addCommands(commands);
+
+      annyang.addCallback(`result`, userSaid => {
+        const text = userSaid[0];
+        if (text == annNames.OK) {
+          canListen = true;
+        }
+        setTimeout(function() {
+          canListen = false;
+        }, 5000);
+
+        console.log(userSaid, canListen);
+        if (canListen) {
+          self.socket.emit(socketNames.SPEECH, text);
+          if (text != annNames.OK) {
+            canListen = false;
+          }
+
+        }
+
+      });
+
+      // Start listening.
+      annyang.start();
+
+    }
+
+  }
+  loadSocket = () => {
+    this.socket = io(`/`);
+    this.socket.on(socketNames.CONNECT, () => {
+      this.initPeer();
+    });
+    this.socket.on(socketNames.SPEECH_POST, this.handleWSpeechPost);
+    this.socket.on(socketNames.FOUND, this.handleWSFound);
+
+    window.socket = this.socket;
+  }
+
+  handleStrangerStream = strangerStream => {
+    annyang.trigger(annNames.ONLINE);
+    this.props.actions.addStrangerStream(strangerStream);
+    this.setState({strangerStream});
+  }
+  handleCloseStream = () => {
+    let {strangerStream} = this.state;
+    strangerStream = ``;
+    this.socket.emit(`search`);
+    this.setState({strangerStream});
+  }
+
+  // WS
+  handleWSpeechPost = text => {
+    speak(text);
+  }
+  handleWSFound = strangeid => {
+    const {youStream} = this.state;
+    const call = this.peer.call(strangeid, youStream);
+    call.on(`stream`, this.handleStrangerStream);
+    call.on(`close`, this.handleCloseStream);
+  }
+
+  handleWSOnline = obj => {
+    console.log(obj);
+  }
+
+  //peer
   initPeer = () => {
     const {id} = this.socket;
 
@@ -20,9 +123,17 @@ class App extends Component {
       path: `/api`,
       secure: true
     });
-
     this.peer.on(`open`, () => {
-      this.socket.emit(`search`);
+      let obj = {};
+      const userId = localStorage.getItem(`userId`);
+      if (userId) {
+        obj = {
+          userId: parseFloat(userId)
+        };
+      } else {
+        console.log(`not logged in`);
+      }
+      this.socket.emit(`search`, obj);
     });
 
     this.peer.on(`call`, call => {
@@ -33,66 +144,50 @@ class App extends Component {
       call.on(`close`, this.handleCloseStream);
     });
 
-  }
-
-  handleCloseStream = () => {
-    let {strangerStream} = this.state;
-    strangerStream = undefined;
-
-    this.socket.emit(`search`);
-
-    this.setState({strangerStream});
-  }
-
-  handleStrangerStream = strangerStream => {
-    this.setState({strangerStream});
-  }
-
-  handleWSFound = strangerId => {
-    const {youStream} = this.state;
-
-    const call = this.peer.call(strangerId, youStream);
-    call.on(`stream`, this.handleStrangerStream);
-    call.on(`close`, this.handleCloseStream);
-
-  }
-
-  initSocket() {
-    // '/' gaat verbinden met de server waar het op draait
-    this.socket = IO(`/`);
-    this.socket.on(`connect`, this.initPeer);
-    this.socket.on(`found`, this.handleWSFound);
+    console.log(id);
   }
 
   handleYouStream = youStream => {
-    this.setState({youStream});
-    this.initSocket();
-  }
+    this.setState({youStream: youStream});
+    this.props.actions.addYouStream(youStream);
 
-  handleYouStreamError = e => console.error(e);
+    this.loadSocket();
+  }
+  handleYouStreamError = err => {
+    console.error(err);
+  }
 
   initStream() {
-    navigator.getUserMedia (
-      {audio: true, video: true},
-      this.handleYouStream,
-      this.handleYouStreamError
-    );
+    navigator.getUserMedia({
+      video: true,
+      audio: true
+    }, this.handleYouStream, this.handleYouStreamError);
   }
 
-  componentDidMount() {
-    this.initStream();
-  }
+  // EVENTS
 
   render() {
-    const {youStream, strangerStream} = this.state;
-
     return (
       <main>
-          <Video stream={youStream} />
-          <Video stream={strangerStream} />
+        {this.props.children}
       </main>
     );
+
   }
+
 }
 
-export default App;
+App.propTypes = {
+  children: PropTypes.object.isRequired
+};
+
+const mapStateToProps = (mapState, ownProps) => {
+  return {youStream: mapState.youStream, strangerStream: mapState.strangerStream};
+};
+const mapDispatchToProps = dispatch => {
+  return {
+    actions: bindActionCreators(streamActions, dispatch)
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
