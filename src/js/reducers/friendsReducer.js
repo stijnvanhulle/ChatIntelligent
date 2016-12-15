@@ -19,15 +19,14 @@ export default function friendsReducer(state = [], action) {
       Object.assign({}, action.friend)
     ];
   case actionsUrl.ACCEPT_FRIEND_SUCCESS:
-
     let newState = [...state];
     newState = newState.map(item => {
-      if (item.user1 == action.friend.user1 && item.user2 == action.friend.user2) {
+      if (item.user1 === action.friend.user1 && item.user2 === action.friend.user2) {
         item = action.friend;
       }
       return item;
     });
-
+    break;
   default:
     return state;
 

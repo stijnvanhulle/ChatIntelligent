@@ -12,13 +12,17 @@ import {setUrl, setParams} from '../lib/functions';
 import _url from './lib/url';
 import actionsUrl from './lib/actionsUrl';
 
+<<<<<<< HEAD
 const url = setUrl(_url);
 
 export function createUser_SUCCESS(user) {
+=======
+export function createUserSucces(user) {
+>>>>>>> 87f917326a56014f379fcc8684151dde028090d1
   return {type: actionsUrl.CREATE_USER_SUCCESS, user};
 }
 
-export function loadUsers_SUCCESS(users) {
+export function loadUsersSucces(users) {
   return {type: actionsUrl.LOAD_USERS_SUCCESS, users};
 }
 
@@ -29,7 +33,7 @@ export function createUser(user) {
     try {
       return axios.post(url.USER, user).then(response => {
         const data = response.data;
-        dispatch(createUser_SUCCESS(data));
+        dispatch(createUserSucces(data));
       }).catch(err => {
         throw err;
       });
@@ -46,7 +50,7 @@ export function loadUsers(query = ``) {
     try {
       return axios.get(url.USER).then(response => {
         const data = response.data;
-        dispatch(loadUsers_SUCCESS(data));
+        dispatch(loadUsersSucces(data));
       }).catch(err => {
         throw err;
       });

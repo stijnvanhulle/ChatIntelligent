@@ -7,9 +7,13 @@
 * @License: stijnvanhulle.be
 */
 
+<<<<<<< HEAD
 import axios from 'axios';
 import {setUrl, setParams} from '../lib/functions';
 import _url from './lib/url';
+=======
+//import axios from 'axios';
+>>>>>>> 87f917326a56014f379fcc8684151dde028090d1
 import actionsUrl from './lib/actionsUrl';
 
 const url = setUrl(_url);
