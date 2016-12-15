@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T15:43:27+01:00
+* @Last modified time: 2016-12-15T19:16:02+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -52,7 +52,11 @@ class App extends Component {
           throw err;
         });
       } else {
-        this.props.router.push(`/login`);
+        const pathname = this.props.location.pathname.replace(`/`, ``);
+        if (pathname != `register`) {
+          this.props.router.push(`/login`);
+        }
+
       }
     } catch (e) {
       console.log(e);
@@ -128,6 +132,7 @@ class App extends Component {
 
     global.socket = this.socket;
     window.socket = this.socket;
+    window.speak = speak;
   }
 
   handleWSNewFriend = obj => {
