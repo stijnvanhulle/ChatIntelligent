@@ -9,7 +9,11 @@
 
 import React, {Component, PropTypes} from 'react';
 import Peer from 'peerjs';
+<<<<<<< HEAD
 import axios from 'axios';
+=======
+import annyang from 'annyang';
+>>>>>>> 87f917326a56014f379fcc8684151dde028090d1
 import io from 'socket.io-client';
 import socketNames from '../lib/const/socketNames';
 import annNames from '../lib/const/annNames';
