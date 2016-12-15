@@ -3,7 +3,7 @@
 * @Date:   2016-12-14T16:27:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T11:26:18+01:00
+* @Last modified time: 2016-12-15T12:59:59+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -24,13 +24,12 @@ export const setSuccessAndFail = item => {
 
   for (let i = 0;i < keys.length;i ++) {
     const key = keys[i];
-    if (key.toLowerCase().indexOf(`create`) != - 1 || key.toLowerCase().indexOf(`load`) != - 1 || key.toLowerCase().indexOf(`update`) != - 1 || key.toLowerCase().indexOf(`get`) != - 1 || key.toLowerCase().indexOf(`add`) != - 1) {
+    if (key.toLowerCase().indexOf(`create`) !== - 1 || key.toLowerCase().indexOf(`load`) !== - 1 || key.toLowerCase().indexOf(`update`) !== - 1 || key.toLowerCase().indexOf(`get`) !== - 1 || key.toLowerCase().indexOf(`add`) !== - 1) {
       if (!item[`${key}_SUCCESS`]) {
         item[`${key}_SUCCESS`] = `${item[key]}_success`;
+
       }
-
     }
-
   }
 
   return item;
