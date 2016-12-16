@@ -65,7 +65,7 @@ main {
 * @Date:   2016-12-15T12:54:08+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T15:33:13+01:00
+* @Last modified time: 2016-12-16T20:49:20+01:00
 * @License: stijnvanhulle.be
 */
 body {
@@ -172,6 +172,12 @@ video {
 }
 
 .message {
+  display: block;
+  position: fixed;
+  z-index: 999;
+}
+
+.endCall {
   display: block;
   position: fixed;
   z-index: 999;

@@ -3,7 +3,7 @@
 * @Date:   2016-12-14T19:55:16+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T20:15:59+01:00
+* @Last modified time: 2016-12-16T19:33:54+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -12,7 +12,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T20:15:59+01:00
+* @Last modified time: 2016-12-16T19:33:54+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -23,6 +23,8 @@ import {bindActionCreators} from 'redux';
 import * as friendActions from '../actions/friendActions';
 import AddFriendForm from '../components/forms/addFriendForm';
 import url from '../actions/lib/url';
+import {setParams} from '../lib/functions';
+import global from '../lib/const/global';
 class FriendsPage extends Component {
   state = {
     meId: null,
@@ -85,6 +87,21 @@ class FriendsPage extends Component {
 
     return this.setState({user: user});
   }
+  callFriend = userId => {
+    const self = this;
+    axios.get(setParams(url.USER_ONLINE, parseFloat(userId))).then(response => {
+      const data = response.data;
+      if (data.online) {
+        global.events.emit(`connect`, userId);
+        self.props.router.push(`/`);
+      } else {
+        console.log(`user not online`);
+      }
+    }).catch(err => {
+      throw err;
+    });
+
+  }
 
   messageView = (item, i) => {
     let confirmed;
@@ -94,8 +111,11 @@ class FriendsPage extends Component {
       confirmed = `not confirmed`;
     }
     return (
-      <div key={i}>{item.user2.firstName} {item.user2.lastName}
-        -- {confirmed}</div>
+      <div key={item.user2.id}>{item.user2.firstName} {item.user2.lastName}
+        -- {confirmed}
+        {item.user2.online}
+        <button onClick={this.callFriend.bind(this, item.user2.id)}>Connect</button>
+      </div>
     );
   }
 

@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-16T16:05:36+01:00
+* @Last modified time: 2016-12-16T21:32:46+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -34,14 +34,19 @@ class HomePage extends Component {
     const self = this;
     global.events.on(`canStart`, ok => {
       if (ok) {
-        self.setState({canStart: ok, isAccept: true});
+        self.setState({canStart: ok});
       } else {
-        self.setState({canStart: ok, isAccept: false});
+        self.setState({canStart: ok});
       }
     });
 
-    global.events.on(`new_call`, strangerId => {
+    global.events.on(`new_call`, stranger => {
       self.setState({isAccept: true, text: `hallo, accpet`});
+    });
+
+    global.events.on(`connect`, user => {
+      global.events.emit(`search`, user);
+      this.setState({canStart: true});
     });
 
     global.events.on(`new_friend`, friend => {
@@ -90,7 +95,10 @@ class HomePage extends Component {
   }
   onRandom = e => {
     global.events.emit(`search`, {userId: null});
-    this.setState({canStart: true});
+  }
+  endCall = e => {
+    global.events.emit(`call_end`, true);
+    this.setState({canStart: false, isMessage: false, isAccept: false});
   }
 
   render() {
@@ -123,6 +131,7 @@ class HomePage extends Component {
     } else if (this.state.canStart) {
       return (
         <div>
+          <button className='endCall' onClick={this.endCall}>End call</button>
           {getVideo(false)}
         </div>
       );

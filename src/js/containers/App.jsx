@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-16T16:06:58+01:00
+* @Last modified time: 2016-12-16T21:21:27+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -31,8 +31,8 @@ class App extends Component {
     this.loadUser();
   }
   state = {
-    userId: null,
-    strangerId: null,
+    me: null,
+    stranger: null,
     youStream: null,
     strangerStream: null
   }
@@ -45,7 +45,9 @@ class App extends Component {
     try {
       userId = JSON.parse(localStorage.getItem(`userId`));
       if (userId) {
-        this.state.userId = parseFloat(userId);
+        this.state.me = {
+          userId: parseFloat(userId)
+        };
         axios.get(setParams(url.USER_ONLINE, parseFloat(userId))).then(response => {
           const data = response.data;
           //localStorage.setItem(`isOnline`, data.online);
@@ -105,6 +107,7 @@ class App extends Component {
 
   }
   loadSocket = () => {
+    const self = this;
     this.socket = io(global.url);
     this.socket.on(socketNames.CONNECT, () => {
       this.initPeer();
@@ -131,18 +134,34 @@ class App extends Component {
     this.socket.on(socketNames.FOUND, this.handleWSFound);
     this.socket.on(socketNames.CALL_END, this.handelWSCallEnd);
     this.socket.on(socketNames.NEW_FRIEND, this.handleWSNewFriend);
+    this.socket.on(socketNames.CALL_ACCEPT, stranger => {
+      this.setState({stranger: stranger});
+      global.events.emit(`canStart`, true);
+    });
     this.socket.on(socketNames.CALL, this.handleWSCall);
 
     global.events.on(`search`, obj => {
       this.socket.emit(`search`, obj);
     });
 
+    global.events.on(`call_end`, () => {
+      this.socket.emit(socketNames.CALL_END, {
+        me: this.state.me,
+        stranger: this.state.stranger
+      });
+    });
+
     global.events.on(`accepted`, ok => {
-      if (ok) {} else {
+      if (ok) {
+        this.socket.emit(socketNames.CALL_ACCEPTED, {
+          me: this.state.me,
+          stranger: this.state.stranger
+        });
+      } else {
 
         this.socket.emit(socketNames.CALL_END, {
-          me: this.state.userId,
-          stranger: this.state.strangerId
+          me: this.state.me,
+          stranger: this.state.stranger
         });
 
       }
@@ -155,20 +174,20 @@ class App extends Component {
 
   handleWSNewFriend = obj => {
     console.log(`new friend`, obj);
-    if (obj.user2 == this.state.userId) {
+    if (obj.user2 == this.state.me.userId) {
       global.events.emit(`new_friend`, obj);
     }
 
   }
-  handleWSCall = stranger => {
-    if (stranger.userId == this.state.userId) {
-      this.setState({strangerId: stranger.userId});
+  handleWSCall = ({stranger, me}) => {
+    if (stranger.socketId == this.state.me.socketId) {
+      global.events.emit(`canStart`, true);
       global.events.emit(`new_call`, stranger);
     }
 
   }
-  handelWSCallEnd = id => {
-    if (id == this.state.userId) {
+  handelWSCallEnd = item => {
+    if (item.socketId == this.state.me.socketId) {
       let {strangerStream} = this.state;
       strangerStream = ``;
       global.events.emit(`canStart`, false);
@@ -179,7 +198,6 @@ class App extends Component {
 
   handleStrangerStream = strangerStream => {
     this.props.actions.addStrangerStream(strangerStream);
-    global.events.emit(`canStart`, true);
     this.setState({strangerStream});
   }
   handleCloseStream = () => {
@@ -194,11 +212,23 @@ class App extends Component {
   handleWSpeechPost = text => {
     speak(text);
   }
-  handleWSFound = strangeid => {
-    const {youStream} = this.state;
-    const call = this.peer.call(strangeid, youStream);
-    call.on(`stream`, this.handleStrangerStream);
-    call.on(`close`, this.handleCloseStream);
+  handleWSFound = ({stranger, me}) => {
+    if (this.state.me && stranger.userId == this.state.me.userId) {
+      this.state.me = stranger;
+      this.state.stranger = me;
+    } else {
+      this.state.me = me;
+      this.state.stranger = stranger;
+    }
+
+    if (stranger.socketId != this.state.me.socketId) {
+      const {youStream} = this.state;
+      const call = this.peer.call(this.state.stranger.socketId, youStream);
+      call.on(`stream`, this.handleStrangerStream);
+      call.on(`close`, this.handleCloseStream);
+
+    }
+
   }
 
   handleWSOnline = obj => {
@@ -222,7 +252,6 @@ class App extends Component {
     this.peer.on(`call`, call => {
       const {youStream} = this.state;
       call.answer(youStream);
-
       call.on(`stream`, this.handleStrangerStream);
       call.on(`close`, this.handleCloseStream);
     });
