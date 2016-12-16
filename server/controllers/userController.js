@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T20:13:44+01:00
+* @Last modified time: 2016-12-16T15:09:04+01:00
 * @License: stijnvanhulle.be
 */
 const {calculateId} = require('./lib/functions');
@@ -182,7 +182,6 @@ module.exports.addUser = (user) => {
         throw new Error('No instance of');
       }
       getUserByUsername(user.username).then(users => {
-        console.log(users);
         if (users && users.length > 0) {
           reject('Username already taken');
         } else {

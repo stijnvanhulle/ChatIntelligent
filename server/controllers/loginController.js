@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T12:10:36+01:00
+* @Last modified time: 2016-12-16T15:09:23+01:00
 * @License: stijnvanhulle.be
 */
 const {calculateId} = require('./lib/functions');
@@ -71,7 +71,6 @@ const loginUserId = (userId) => {
         user=item;
         user.setOnline(true);
         user=user.json(stringify = false, removeEmpty = true);
-        console.log(user);
         UserModel.update({
           id: user.id
         }, user, {
@@ -104,7 +103,6 @@ const loginUser = (username, password) => {
         user=item;
         user.setOnline(true);
         user=user.json(stringify = false, removeEmpty = true);
-        console.log(user);
         UserModel.update({
           id: user.id
         }, user, {

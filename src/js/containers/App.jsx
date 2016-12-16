@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T19:54:28+01:00
+* @Last modified time: 2016-12-16T16:06:58+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -29,13 +29,12 @@ class App extends Component {
     //this.loadSocket();
     this.loadAnn();
     this.loadUser();
-    speak(`Welcome on alo`);
   }
   state = {
     userId: null,
+    strangerId: null,
     youStream: null,
-    strangerStream: null,
-    canListen: false
+    strangerStream: null
   }
 
   componentDidMount() {
@@ -49,7 +48,7 @@ class App extends Component {
         this.state.userId = parseFloat(userId);
         axios.get(setParams(url.USER_ONLINE, parseFloat(userId))).then(response => {
           const data = response.data;
-          localStorage.setItem(`isOnline`, data.online);
+          //localStorage.setItem(`isOnline`, data.online);
         }).catch(err => {
           throw err;
         });
@@ -130,7 +129,24 @@ class App extends Component {
     });
     this.socket.on(socketNames.SPEECH_POST, this.handleWSpeechPost);
     this.socket.on(socketNames.FOUND, this.handleWSFound);
+    this.socket.on(socketNames.CALL_END, this.handelWSCallEnd);
     this.socket.on(socketNames.NEW_FRIEND, this.handleWSNewFriend);
+    this.socket.on(socketNames.CALL, this.handleWSCall);
+
+    global.events.on(`search`, obj => {
+      this.socket.emit(`search`, obj);
+    });
+
+    global.events.on(`accepted`, ok => {
+      if (ok) {} else {
+
+        this.socket.emit(socketNames.CALL_END, {
+          me: this.state.userId,
+          stranger: this.state.strangerId
+        });
+
+      }
+    });
 
     global.socket = this.socket;
     window.socket = this.socket;
@@ -144,15 +160,32 @@ class App extends Component {
     }
 
   }
+  handleWSCall = stranger => {
+    if (stranger.userId == this.state.userId) {
+      this.setState({strangerId: stranger.userId});
+      global.events.emit(`new_call`, stranger);
+    }
+
+  }
+  handelWSCallEnd = id => {
+    if (id == this.state.userId) {
+      let {strangerStream} = this.state;
+      strangerStream = ``;
+      global.events.emit(`canStart`, false);
+      this.props.actions.addStrangerStream(null);
+      this.setState({strangerStream});
+    }
+  }
 
   handleStrangerStream = strangerStream => {
     this.props.actions.addStrangerStream(strangerStream);
+    global.events.emit(`canStart`, true);
     this.setState({strangerStream});
   }
   handleCloseStream = () => {
     let {strangerStream} = this.state;
     strangerStream = ``;
-    this.socket.emit(`search`);
+    this.socket.emit(`search`, {userId: null});
     this.setState({strangerStream});
   }
 
@@ -183,7 +216,7 @@ class App extends Component {
       secure: true
     });
     this.peer.on(`open`, () => {
-      this.socket.emit(`search`);
+      //this.socket.emit(`search`);
     });
 
     this.peer.on(`call`, call => {

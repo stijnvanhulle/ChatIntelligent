@@ -3,7 +3,7 @@
 * @Date:   2016-12-09T14:48:19+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T15:47:46+01:00
+* @Last modified time: 2016-12-16T15:58:24+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -29,9 +29,8 @@ const onMessageSocket = (io, socket, me) => {
       if (me.userId) {
         loginController.loginUserId(me.userId).then(ok => {
           if (ok) {
-            console.log('Logged on user ', me);
             updateMe(users, me);
-            console.log(users);
+            console.log('Users:', users.length, " ", users);
           }
         }).catch(err => {
           console.log(err);
@@ -59,16 +58,48 @@ const onMessageSocket = (io, socket, me) => {
     console.log('Users:', users.length, " ", users);
   });
 
-  socket.on(socketNames.SEARCH, () => {
-    const stranger = search(users, me);
+  socket.on(socketNames.SEARCH, (obj) => {
+    const {userId} = obj;
+    let stranger;
+
+    if (userId) {
+      const strangers = users.filter(u => {
+        return u.userId !== me.userId && u.status == Status.SEARCHING;
+      });
+      if (stranger.length > 0) {
+        stranger = strangers[0];
+      }
+
+    } else {
+      stranger = search(users, me);
+    }
+
     if (stranger) {
 
       me.status = Status.PAIRED;
       me.paired = stranger.socketId;
       users = linkStranger(users, me);
-      socket.emit('found', stranger.socketId);
+      socket.emit(socketNames.FOUND, stranger.socketId);
+      io.emit(socketNames.CALL, stranger);
     }
     console.log('Users:', users.length, " ", users);
+  });
+
+  socket.on(socketNames.CALL_END, ({me, stranger}) => {
+    users = users.map(u => {
+      if (u.userId == me) {
+        u.status = Status.SEARCHING;
+        u.paired = '';
+      }
+      if (u.userId == stranger) {
+        u.status = Status.SEARCHING;
+        u.paired = '';
+      }
+      return u;
+
+    });
+    io.emit(socketNames.CALL_END, stranger);
+    io.emit(socketNames.CALL_END, me);
   });
 
   socket.on(socketNames.SPEECH, (text) => {
@@ -78,7 +109,6 @@ const onMessageSocket = (io, socket, me) => {
     });
 
     request.on('response', function(res) {
-      console.log(res);
       if (res.result) {
         const {speech} = res.result.fulfillment;
         io.emit(socketNames.SPEECH_POST, speech);
