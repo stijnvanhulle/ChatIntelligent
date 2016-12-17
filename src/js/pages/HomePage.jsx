@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-16T21:32:46+01:00
+* @Last modified time: 2016-12-17T16:53:04+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -75,7 +75,8 @@ class HomePage extends Component {
       console.log(`accept`);
       this.setState({isMessage: false});
       const {friend} = this.state;
-      this.props.friendActions.acceptFriend(this.state.meId, friend.user2).then(() => {
+      this.props.friendActions.acceptFriend(friend.user1, friend.user2).then(() => {
+        friend.isConfirmed = true;
         console.log(friend, ` accepted`);
       }).catch(err => {
         console.log(err);

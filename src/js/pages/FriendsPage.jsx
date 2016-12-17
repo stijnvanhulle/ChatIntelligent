@@ -3,7 +3,7 @@
 * @Date:   2016-12-14T19:55:16+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-16T19:33:54+01:00
+* @Last modified time: 2016-12-17T17:06:22+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -12,7 +12,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-16T19:33:54+01:00
+* @Last modified time: 2016-12-17T17:06:22+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -29,6 +29,7 @@ class FriendsPage extends Component {
   state = {
     meId: null,
     user: {},
+    users: [],
     errors: {},
     saving: false
   }
@@ -50,32 +51,52 @@ class FriendsPage extends Component {
       console.log(e);
     }
 
+    global.events.on(`loadFriends`, () => {
+      this.props.actions.loadFriends(this.state.meId);
+    });
+
   }
-  addFriend = e => {
-    e.preventDefault();
+  addFriend = item => {
     //login
-    const user = this.state.user;
-    if (user.username && this.state.user.id) {
-      this.props.actions.addFriend(this.state.meId, this.state.user.id).then(() => {
-        console.log(`ok`);
-      }).catch(err => {
-        console.log(err);
-      });
+    const user = item;
+
+    const contains = this.props.friends.find(item => {
+      if (item.user2.id == user.id) {
+        return true;
+      }
+    });
+    if (!contains) {
+      if (user.username && user.id) {
+        this.props.actions.addFriend(this.state.meId, user.id).then(() => {
+          console.log(`ok`);
+        }).catch(err => {
+          console.log(err);
+        });
+      }
     }
 
   }
   findFriend = e => {
     e.preventDefault();
     //login
-    let user = this.state.user;
+    let users = this.state.users;
+    const user = this.state.user;
     if (user.username) {
       axios.get(`${url.USER}?username=${user.username}`).then(response => {
         const data = response.data;
-        user = data;
-        console.log(user);
-        this.setState({user});
+        users = data;
+        console.log(users);
+
+        users = users.filter(item => {
+          if (item && item.id != this.state.meId) {
+            return item;
+          }
+        });
+
+        this.setState({users});
+
       }).catch(err => {
-        throw err;
+        console.log(err);
       });
     }
 
@@ -114,17 +135,22 @@ class FriendsPage extends Component {
       <div key={item.user2.id}>{item.user2.firstName} {item.user2.lastName}
         -- {confirmed}
         {item.user2.online}
-        <button onClick={this.callFriend.bind(this, item.user2.id)}>Connect</button>
+        <button disabled={!item.isConfirmed} onClick={this.callFriend.bind(this, item.user2.id)}>Connect</button>
+      </div>
+    );
+  }
+  messageView_users = (item, i) => {
+    return (
+      <div key={item.id}>{item.firstName} {item.lastName}
+        <button onClick={this.addFriend.bind(this, item)}>Choose user</button>
       </div>
     );
   }
 
   render() {
-    console.log(this.props.friends);
     return (
       <div>
-        <AddFriendForm onChange={this.onFriendChange} onSave={this.findFriend} user={this.state.user} errors={this.state.errors} saving={this.state.saving} />
-        <button onClick={this.addFriend}>Add</button>
+        <AddFriendForm onChange={this.onFriendChange} onSave={this.findFriend} user={this.state.user} errors={this.state.errors} saving={this.state.saving} /> {this.state.users.map((item, i) => this.messageView_users(item, i))}
 
         {this.props.friends.map((item, i) => this.messageView(item, i))}
       </div>

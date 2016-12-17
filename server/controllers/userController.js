@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-16T15:09:04+01:00
+* @Last modified time: 2016-12-17T17:00:28+01:00
 * @License: stijnvanhulle.be
 */
 const {calculateId} = require('./lib/functions');
@@ -32,7 +32,7 @@ const getUserByUsername = (username) => {
             });
           }
           if (users.length == 1) {
-            resolve(users[0]);
+            resolve(users);
           } else {
             resolve(users);
           }
@@ -182,7 +182,7 @@ module.exports.addUser = (user) => {
         throw new Error('No instance of');
       }
       getUserByUsername(user.username).then(users => {
-        if (users && users.length > 0) {
+        if (users && users[0] && users[0].id) {
           reject('Username already taken');
         } else {
           calculateId(UserModel).then(id => {
@@ -218,24 +218,17 @@ module.exports.addFriend = (friend) => {
         //reject('users the same');
         //return;
       }
-      getFriend(friend.user1, friend.user2).then(friend => {
-        if (!friend) {
-          calculateId(FriendModel).then(id => {
-            friend.id = id;
-            friend.save().then((doc) => {
-              friend.date = doc.date;
-              const obj = friend.json(stringify = false, removeEmpty = true)
-              io.emit(socketNames.NEW_FRIEND, obj);
-              resolve(obj);
-            }).catch(err => {
-              reject(err);
-            });
-          });
+      getFriend(friend.user1, friend.user2).then(item => {
+        if (!item) {
+          return addFriend(friend);
         } else {
+          friend = item;
           const obj = friend.json(stringify = false, removeEmpty = true)
-          io.emit(socketNames.NEW_FRIEND, obj);
-          resolve(obj);
+          return obj;
         }
+      }).then(friend => {
+        io.emit(socketNames.NEW_FRIEND, friend);
+        resolve(friend);
       }).catch(err => {
         reject(err);
       });
@@ -300,6 +293,30 @@ const updateUser = (user) => {
   });
 };
 
+const addFriend = (friend) => {
+  return new Promise((resolve, reject) => {
+    try {
+      if (!friend instanceof Friend) {
+        throw new Error('No friend');
+      }
+      calculateId(FriendModel).then(id => {
+        friend.id = id;
+        friend.save().then((doc) => {
+          friend.date = doc.date;
+          const obj = friend.json(stringify = false, removeEmpty = true)
+          resolve(obj);
+        }).catch(err => {
+          reject(err);
+        });
+      });
+
+    } catch (e) {
+      console.log(e);
+      reject(e);
+    }
+  });
+};
+
 module.exports.acceptFriend = (userId1, userId2) => {
   return new Promise((resolve, reject) => {
     try {
@@ -310,8 +327,16 @@ module.exports.acceptFriend = (userId1, userId2) => {
         user2;
       getUser(userId1).then(item => {
         user1 = item;
+        const friend = new Friend(userId2, userId1);
+        return addFriend(friend);
 
-        return getUser(userId2);
+      }).then(item => {
+        if (item) {
+          return getUser(userId2);
+        } else {
+          reject('no new friend added');
+        }
+
       }).then(item => {
         user2 = item;
         if (user1 && user2) {
@@ -327,6 +352,7 @@ module.exports.acceptFriend = (userId1, userId2) => {
           reject('somehting wrong with user1');
         }
       }).then(result => {
+        io.emit(socketNames.NEW_FRIEND_ACCEPTED, result);
         resolve(result);
       }).catch(err => {
         reject(err);

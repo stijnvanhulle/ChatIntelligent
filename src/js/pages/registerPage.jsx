@@ -3,11 +3,9 @@
 * @Date:   2016-12-15T12:54:08+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T13:07:40+01:00
+* @Last modified time: 2016-12-17T15:50:42+01:00
 * @License: stijnvanhulle.be
 */
-
-
 
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
@@ -27,8 +25,8 @@ class RegisterPage extends Component {
     e.preventDefault();
     console.log(`saving ${this.state.user}`);
     this.props.actions.createUser(this.state.user).then(ok => {
-      console.log(ok);
       this.setState({user: {}});
+      this.props.router.push(`/`);
     }).catch(err => {
       console.log(err);
     });

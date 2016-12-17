@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-16T21:21:27+01:00
+* @Last modified time: 2016-12-17T17:01:30+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -43,6 +43,8 @@ class App extends Component {
   loadUser = () => {
     let userId;
     try {
+      const pathname = this.props.location.pathname.replace(`/`, ``);
+
       userId = JSON.parse(localStorage.getItem(`userId`));
       if (userId) {
         this.state.me = {
@@ -51,11 +53,14 @@ class App extends Component {
         axios.get(setParams(url.USER_ONLINE, parseFloat(userId))).then(response => {
           const data = response.data;
           //localStorage.setItem(`isOnline`, data.online);
-        }).catch(err => {
-          throw err;
+        }).catch(e => {
+          console.log(e);
+          if (pathname != `register`) {
+            this.props.router.push(`/login`);
+          }
         });
       } else {
-        const pathname = this.props.location.pathname.replace(`/`, ``);
+
         if (pathname != `register`) {
           this.props.router.push(`/login`);
         }
@@ -63,6 +68,9 @@ class App extends Component {
       }
     } catch (e) {
       console.log(e);
+      if (pathname != `register`) {
+        this.props.router.push(`/login`);
+      }
     }
 
   }
@@ -134,6 +142,7 @@ class App extends Component {
     this.socket.on(socketNames.FOUND, this.handleWSFound);
     this.socket.on(socketNames.CALL_END, this.handelWSCallEnd);
     this.socket.on(socketNames.NEW_FRIEND, this.handleWSNewFriend);
+    this.socket.on(socketNames.NEW_FRIEND_ACCEPTED, this.handleWSNewFriendAccepted);
     this.socket.on(socketNames.CALL_ACCEPT, stranger => {
       this.setState({stranger: stranger});
       global.events.emit(`canStart`, true);
@@ -177,8 +186,14 @@ class App extends Component {
     if (obj.user2 == this.state.me.userId) {
       global.events.emit(`new_friend`, obj);
     }
+    global.events.emit(`loadFriends`);
 
   }
+  handleWSNewFriendAccepted = obj => {
+    global.events.emit(`loadFriends`);
+
+  }
+
   handleWSCall = ({stranger, me}) => {
     if (stranger.socketId == this.state.me.socketId) {
       global.events.emit(`canStart`, true);
@@ -187,7 +202,7 @@ class App extends Component {
 
   }
   handelWSCallEnd = item => {
-    if (item.socketId == this.state.me.socketId) {
+    if (item.socketId == this.state.me.socketId || item.socketId == this.state.me.paired) {
       let {strangerStream} = this.state;
       strangerStream = ``;
       global.events.emit(`canStart`, false);
@@ -224,8 +239,16 @@ class App extends Component {
     if (stranger.socketId != this.state.me.socketId) {
       const {youStream} = this.state;
       const call = this.peer.call(this.state.stranger.socketId, youStream);
-      call.on(`stream`, this.handleStrangerStream);
-      call.on(`close`, this.handleCloseStream);
+      if (call) {
+        call.on(`stream`, this.handleStrangerStream);
+        call.on(`close`, this.handleCloseStream);
+      } else {
+        console.log(`cannot call to `);
+        this.socket.emit(socketNames.CALL_END, {
+          me: this.state.me,
+          stranger: this.state.stranger
+        });
+      }
 
     }
 
@@ -273,8 +296,7 @@ class App extends Component {
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
     navigator.getUserMedia({
-      video: true,
-      audio: true
+      video: true, audio: false //TODO: change to true
     }, this.handleYouStream, this.handleYouStreamError);
   }
 

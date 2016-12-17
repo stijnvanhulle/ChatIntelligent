@@ -3,11 +3,11 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-16T15:09:23+01:00
+* @Last modified time: 2016-12-17T15:39:46+01:00
 * @License: stijnvanhulle.be
 */
 const {calculateId} = require('./lib/functions');
-
+const Crypto = require("crypto-js");
 const {User, Friend} = require('../models');
 const {User: UserModel, Friend: FriendModel} = require('../models/mongo');
 
@@ -21,9 +21,14 @@ const getUser = (id) => {
         if (err) {
           reject(err);
         } else {
-          let user = new User();
-          user.load(doc);
-          resolve(user);
+          if (doc) {
+            let user = new User();
+            user.load(doc);
+            resolve(user);
+          } else {
+            resolve(null);
+          }
+
         }
       });
 
@@ -41,6 +46,7 @@ const getUserWithPassword = (username, password) => {
     try {
       if (!username || !password)
         reject('No username for user');
+      password = Crypto.MD5(password.toString());
 
       UserModel.findOne({username: username, password: password}).exec(function(err, doc) {
         if (err) {
@@ -68,9 +74,12 @@ const loginUserId = (userId) => {
       }
       let user;
       getUser(userId).then(item => {
-        user=item;
+        if (!item) {
+          reject("no user found");
+        }
+        user = item;
         user.setOnline(true);
-        user=user.json(stringify = false, removeEmpty = true);
+        user = user.json(stringify = false, removeEmpty = true);
         UserModel.update({
           id: user.id
         }, user, {
@@ -100,9 +109,9 @@ const loginUser = (username, password) => {
       }
       let user;
       getUserWithPassword(username, password).then(item => {
-        user=item;
+        user = item;
         user.setOnline(true);
-        user=user.json(stringify = false, removeEmpty = true);
+        user = user.json(stringify = false, removeEmpty = true);
         UserModel.update({
           id: user.id
         }, user, {
@@ -128,12 +137,15 @@ const loginUser = (username, password) => {
 const logoffUser = (userId) => {
   return new Promise((resolve, reject) => {
     try {
-      if (!userId ) {
+      if (!userId) {
         reject('no userId');
       }
       let user;
       getUser(userId).then(item => {
-        user=item;
+        if (!item) {
+          reject("no user found");
+        }
+        user = item;
         user.setOnline(false);
         UserModel.update({
           id: user.id

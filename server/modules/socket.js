@@ -3,7 +3,7 @@
 * @Date:   2016-12-09T14:48:19+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-16T21:30:31+01:00
+* @Last modified time: 2016-12-17T15:42:46+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -34,6 +34,10 @@ const onMessageSocket = (io, socket, me) => {
           }
         }).catch(err => {
           console.log(err);
+          me.userId = null;
+          updateMe(users, me);
+          console.log('Users:', users.length, " ", users);
+
         });
       }
 
@@ -49,13 +53,16 @@ const onMessageSocket = (io, socket, me) => {
       loginController.logoffUser(me.userId).then(ok => {
         if (ok) {
           console.log('Logged off user ', me);
+          console.log('Users:', users.length, " ", users);
         }
       }).catch(err => {
         console.log(err);
+        me.userId = null;
+        updateMe(users, me);
+        console.log('Users:', users.length, " ", users);
       });
     }
 
-    console.log('Users:', users.length, " ", users);
   });
 
   socket.on(socketNames.SEARCH, (obj) => {
@@ -97,11 +104,11 @@ const onMessageSocket = (io, socket, me) => {
 
   socket.on(socketNames.CALL_END, ({me, stranger}) => {
     users = users.map(u => {
-      if (u.userId == me.userId) {
+      if (u.userId == me.userId || u.paired == me.socketId) {
         u.status = Status.SEARCHING;
         u.paired = '';
       }
-      if (u.userId == stranger.userId) {
+      if (u.userId == stranger.userId || u.paired == stranger.socketI) {
         u.status = Status.SEARCHING;
         u.paired = '';
       }
