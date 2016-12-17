@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-17T15:39:46+01:00
+* @Last modified time: 2016-12-17T17:42:59+01:00
 * @License: stijnvanhulle.be
 */
 const {calculateId} = require('./lib/functions');
@@ -46,7 +46,6 @@ const getUserWithPassword = (username, password) => {
     try {
       if (!username || !password)
         reject('No username for user');
-      password = Crypto.MD5(password.toString());
 
       UserModel.findOne({username: username, password: password}).exec(function(err, doc) {
         if (err) {

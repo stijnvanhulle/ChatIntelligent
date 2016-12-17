@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-17T17:00:28+01:00
+* @Last modified time: 2016-12-17T17:38:08+01:00
 * @License: stijnvanhulle.be
 */
 const {calculateId} = require('./lib/functions');
@@ -18,7 +18,7 @@ const getUserByUsername = (username) => {
     try {
       if (!username)
         reject('No username for user');
-
+      username = username.toLowerCase();
       UserModel.find({username: username}).exec(function(err, docs) {
         if (err) {
           reject(err);

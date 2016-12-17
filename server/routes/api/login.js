@@ -3,12 +3,13 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T21:42:28+01:00
+* @Last modified time: 2016-12-17T17:43:26+01:00
  * @License: stijnvanhulle.be
  */
 
 const url = require('./lib/url');
 const moment = require('moment');
+const Crypto = require("crypto-js");
 const {User, Friend} = require('../../models');
 const {promiseFor} = require('../../lib/functions');
 
@@ -23,7 +24,7 @@ module.exports = [
       const {loginController} = require('../../controllers');
       try {
         let {username, password} = request.payload;
-
+        password = Crypto.MD5(password).toString();
         loginController.loginUser(username, password).then((doc) => {
           reply(doc);
         }).catch(err => {

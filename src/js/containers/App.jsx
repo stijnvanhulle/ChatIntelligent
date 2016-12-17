@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-17T17:01:30+01:00
+* @Last modified time: 2016-12-17T18:13:52+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -27,8 +27,8 @@ class App extends Component {
   constructor(props, context) {
     super(props, context);
     //this.loadSocket();
-    this.loadAnn();
     this.loadUser();
+    this.loadAnn();
   }
   state = {
     me: null,
@@ -84,15 +84,45 @@ class App extends Component {
       commands[annNames.OK] = () => {
         canListen = true;
       };
+      commands[annNames.CALL] = username => {};
 
       // Add our commands to annyang
       annyang.addCommands(commands);
-
       annyang.addCallback(`result`, userSaid => {
-        const text = userSaid[0];
+        const text = userSaid[0].trim().toLowerCase();
         if (text === annNames.OK) {
           canListen = true;
         }
+        if (text.indexOf(annNames.CALL) != - 1) {
+          const username = text.replace(annNames.CALL, ``).trim().toLowerCase();
+          if (username) {
+            axios.get(`${url.USER}?username=${username}`).then(response => {
+              const data = response.data;
+              if (data) {
+                const user = data[0];
+                if (user) {
+                  axios.get(setParams(url.USER_ONLINE, parseFloat(user.id))).then(response => {
+                    const data = response.data;
+                    if (data.online) {
+                      global.events.emit(`connect`, user.id);
+                      self.props.router.push(`/`);
+                    } else {
+                      console.log(`user not online`);
+                    }
+                  }).catch(err => {
+                    throw err;
+                  });
+                }
+
+              }
+
+            }).catch(err => {
+              console.log(err);
+            });
+          }
+
+        }
+
         setTimeout(function() {
           canListen = false;
         }, 5000);
@@ -101,16 +131,23 @@ class App extends Component {
         if (canListen) {
           self.socket.emit(socketNames.SPEECH, text);
           if (text !== annNames.OK) {
-            canListen = false;
+            //canListen = false;
           }
 
+        }
+
+        if (text.indexOf(annNames.STEVE) != - 1 && text.indexOf(annNames.STEVE) < 2) {
+          const what = text.replace(annNames.STEVE, ``).trim().toLowerCase();
+          if (what) {
+            self.socket.emit(socketNames.SPEECH, what);
+          }
         }
 
       });
 
       // Start listening.
       annyang.start();
-
+      console.log(annyang.isListening());
     }
 
   }
@@ -179,6 +216,7 @@ class App extends Component {
     global.socket = this.socket;
     window.socket = this.socket;
     window.speak = speak;
+    window.global = global;
   }
 
   handleWSNewFriend = obj => {
@@ -293,7 +331,7 @@ class App extends Component {
   }
 
   initStream() {
-    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+    navigator.mediaDevices.getUserMedia = navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
     navigator.getUserMedia({
       video: true, audio: false //TODO: change to true
