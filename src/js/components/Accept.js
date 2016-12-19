@@ -3,12 +3,11 @@
 * @Date:   2016-12-05T14:32:42+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-17T15:56:41+01:00
+* @Last modified time: 2016-12-19T23:02:48+01:00
 * @License: stijnvanhulle.be
 */
 
 import React from 'react';
-import TextInput from './common/textInput';
 
 const Accept = ({text, onAccept, onDecline}) => {
   return (

@@ -3,7 +3,7 @@
  * @Date:   2016-11-08T16:04:53+01:00
  * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T17:13:08+01:00
+* @Last modified time: 2016-12-19T21:21:58+01:00
  * @License: stijnvanhulle.be
  */
 
@@ -49,6 +49,7 @@ module.exports = [
         let userId = request.params.id;
         let {friendId} = request.payload;
         const friend = new Friend(userId, friendId);
+        console.log(friend);
 
         userController.addFriend(friend).then((doc) => {
           friend.date = doc.date;

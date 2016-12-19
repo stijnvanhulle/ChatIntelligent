@@ -3,7 +3,7 @@
 * @Date:   2016-12-14T19:55:16+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-17T17:06:22+01:00
+* @Last modified time: 2016-12-19T23:10:08+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -12,7 +12,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-17T17:06:22+01:00
+* @Last modified time: 2016-12-19T23:10:08+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -22,6 +22,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as friendActions from '../actions/friendActions';
 import AddFriendForm from '../components/forms/addFriendForm';
+import eventNames from '../lib/const/eventNames';
 import url from '../actions/lib/url';
 import {setParams} from '../lib/functions';
 import global from '../lib/const/global';
@@ -38,7 +39,6 @@ class FriendsPage extends Component {
 
     let userId;
     try {
-      const obj = {};
       userId = JSON.parse(localStorage.getItem(`userId`));
       this.state.meId = userId;
       if (userId) {
@@ -51,7 +51,7 @@ class FriendsPage extends Component {
       console.log(e);
     }
 
-    global.events.on(`loadFriends`, () => {
+    global.events.on(eventNames.LOADFRIENDS, () => {
       this.props.actions.loadFriends(this.state.meId);
     });
 
@@ -59,20 +59,12 @@ class FriendsPage extends Component {
   addFriend = item => {
     //login
     const user = item;
-
-    const contains = this.props.friends.find(item => {
-      if (item.user2.id == user.id) {
-        return true;
-      }
-    });
-    if (!contains) {
-      if (user.username && user.id) {
-        this.props.actions.addFriend(this.state.meId, user.id).then(() => {
-          console.log(`ok`);
-        }).catch(err => {
-          console.log(err);
-        });
-      }
+    if (user.username && user.id) {
+      this.props.actions.addFriend(this.state.meId, user.id).then(() => {
+        console.log(`ok`);
+      }).catch(err => {
+        console.log(err);
+      });
     }
 
   }
@@ -102,6 +94,7 @@ class FriendsPage extends Component {
 
   }
   onFriendChange = e => {
+    e.preventDefault();
     const field = e.target.name;
     const user = this.state.user;
     user[field] = e.target.value.toString();
@@ -113,7 +106,7 @@ class FriendsPage extends Component {
     axios.get(setParams(url.USER_ONLINE, parseFloat(userId))).then(response => {
       const data = response.data;
       if (data.online) {
-        global.events.emit(`connect`, userId);
+        global.events.emit(eventNames.CONNECT, userId);
         self.props.router.push(`/`);
       } else {
         console.log(`user not online`);
@@ -124,7 +117,7 @@ class FriendsPage extends Component {
 
   }
 
-  messageView = (item, i) => {
+  messageView = item => {
     let confirmed;
     if (item.isConfirmed) {
       confirmed = `confirmed`;
@@ -139,7 +132,7 @@ class FriendsPage extends Component {
       </div>
     );
   }
-  messageView_users = (item, i) => {
+  messageView_users = item => {
     return (
       <div key={item.id}>{item.firstName} {item.lastName}
         <button onClick={this.addFriend.bind(this, item)}>Choose user</button>
@@ -158,13 +151,17 @@ class FriendsPage extends Component {
   }
 }
 
-const mapStateToProps = (mapState, ownProps) => {
+const mapStateToProps = mapState => {
   return {friends: mapState.friends};
 };
 const mapDispatchToProps = dispatch => {
   return {
     actions: bindActionCreators(friendActions, dispatch)
   };
+};
+
+FriendsPage.propTypes = {
+  actions: React.PropTypes.object
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(FriendsPage);

@@ -3,7 +3,7 @@
 * @Date:   2016-12-09T14:48:19+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-17T15:42:46+01:00
+* @Last modified time: 2016-12-19T22:59:28+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -47,7 +47,11 @@ const onMessageSocket = (io, socket, me) => {
 
   socket.on(socketNames.DISCONNECT, () => {
     const {id: socketId} = socket;
-    users = users.filter(c => c.socketId !== socketId);
+    users = users.filter(c => {
+      if (c) {
+        return c.socketId !== socketId;
+      }
+    });
     users = cleanPaired(users, me)
     if (me.userId) {
       loginController.logoffUser(me.userId).then(ok => {
@@ -64,6 +68,8 @@ const onMessageSocket = (io, socket, me) => {
     }
 
   });
+
+  
 
   socket.on(socketNames.SEARCH, (obj) => {
     const {userId} = obj;
@@ -104,19 +110,22 @@ const onMessageSocket = (io, socket, me) => {
 
   socket.on(socketNames.CALL_END, ({me, stranger}) => {
     users = users.map(u => {
-      if (u.userId == me.userId || u.paired == me.socketId) {
-        u.status = Status.SEARCHING;
-        u.paired = '';
+      if (me && stranger) {
+        if (u.userId == me.userId || u.paired == me.socketId) {
+          u.status = Status.SEARCHING;
+          u.paired = '';
+        }
+        if (u.userId == stranger.userId || u.paired == stranger.socketI) {
+          u.status = Status.SEARCHING;
+          u.paired = '';
+        }
+        return u;
       }
-      if (u.userId == stranger.userId || u.paired == stranger.socketI) {
-        u.status = Status.SEARCHING;
-        u.paired = '';
-      }
-      return u;
 
     });
     io.emit(socketNames.CALL_END, stranger);
     io.emit(socketNames.CALL_END, me);
+
 
     console.log('Users:', users.length, " ", users);
   });

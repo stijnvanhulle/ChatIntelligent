@@ -3,12 +3,12 @@
 * @Date:   2016-12-09T15:35:26+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T13:06:49+01:00
+* @Last modified time: 2016-12-19T23:11:18+01:00
 * @License: stijnvanhulle.be
 */
 
 import axios from 'axios';
-import {setUrl, setParams} from '../lib/functions';
+import {setUrl} from '../lib/functions';
 import _url from './lib/url';
 import actionsUrl from './lib/actionsUrl';
 

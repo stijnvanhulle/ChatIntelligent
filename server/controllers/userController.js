@@ -3,7 +3,7 @@
 * @Date:   2016-11-28T14:54:43+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-17T17:38:08+01:00
+* @Last modified time: 2016-12-19T21:29:54+01:00
 * @License: stijnvanhulle.be
 */
 const {calculateId} = require('./lib/functions');
@@ -150,7 +150,7 @@ const getFriend = (userId, userid2) => {
     try {
       if (!userId || !userid2)
         reject('No userId for user');
-
+      console.log(userId, userid2);
       FriendModel.findOne({user1: userId, user2: userid2}).exec(function(err, doc) {
         if (err) {
           reject(err);
@@ -215,14 +215,15 @@ module.exports.addFriend = (friend) => {
       }
       if (friend.user1 == friend.user2) {
         //TODO: production reject
-        //reject('users the same');
-        //return;
+        reject('users the same');
+        return;
       }
       getFriend(friend.user1, friend.user2).then(item => {
         if (!item) {
           return addFriend(friend);
         } else {
           friend = item;
+          console.log(friend);
           const obj = friend.json(stringify = false, removeEmpty = true)
           return obj;
         }

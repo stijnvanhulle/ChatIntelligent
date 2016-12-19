@@ -3,7 +3,7 @@
 * @Date:   2016-12-14T19:55:16+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T15:38:38+01:00
+* @Last modified time: 2016-12-19T23:05:32+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -12,7 +12,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T15:38:38+01:00
+* @Last modified time: 2016-12-19T23:05:32+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -83,4 +83,8 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
+
+LoginPage.propTypes = {
+  actions: React.PropTypes.object
+};
 export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);

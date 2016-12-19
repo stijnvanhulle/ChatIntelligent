@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-17T16:53:04+01:00
+* @Last modified time: 2016-12-19T23:07:07+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -12,9 +12,9 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as streamActions from '../actions/streamActions';
 import * as friendActions from '../actions/friendActions';
+import eventNames from '../lib/const/eventNames';
 import Video from '../components/Video';
 import Accept from '../components/Accept';
-import socketNames from '../lib/const/socketNames';
 import global from '../lib/const/global';
 
 class HomePage extends Component {
@@ -32,7 +32,7 @@ class HomePage extends Component {
   constructor(props, context) {
     super(props, context);
     const self = this;
-    global.events.on(`canStart`, ok => {
+    global.events.on(eventNames.CANSTART, ok => {
       if (ok) {
         self.setState({canStart: ok});
       } else {
@@ -40,16 +40,24 @@ class HomePage extends Component {
       }
     });
 
-    global.events.on(`new_call`, stranger => {
+    global.events.on(eventNames.ISMESSAGE, ok => {
+      if (ok) {
+        self.setState({isMessage: ok});
+      } else {
+        self.setState({isMessage: ok});
+      }
+    });
+
+    global.events.on(eventNames.NEWCALL, () => {
       self.setState({isAccept: true, text: `hallo, accpet`});
     });
 
-    global.events.on(`connect`, user => {
+    global.events.on(eventNames.CONNECT, user => {
       global.events.emit(`search`, user);
       this.setState({canStart: true});
     });
 
-    global.events.on(`new_friend`, friend => {
+    global.events.on(eventNames.NEWFRIEND, friend => {
       self.setState({isMessage: true, text: `hallo, accpet`});
       let userId;
       try {
@@ -68,9 +76,10 @@ class HomePage extends Component {
   }
 
   onAccept = e => {
+    e.preventDefault();
     if (this.state.isAccept) {
       this.setState({isAccept: false});
-      global.events.emit(`accepted`, true);
+      global.events.emit(eventNames.ACCEPTED, true);
     } else {
       console.log(`accept`);
       this.setState({isMessage: false});
@@ -85,9 +94,10 @@ class HomePage extends Component {
 
   }
   onDecline = e => {
+    e.preventDefault();
     if (this.state.isAccept) {
       this.setState({isAccept: false});
-      global.events.emit(`accepted`, false);
+      global.events.emit(eventNames.ACCEPTED, false);
     } else {
       console.log(`decline`);
       this.setState({isMessage: false});
@@ -95,10 +105,12 @@ class HomePage extends Component {
 
   }
   onRandom = e => {
-    global.events.emit(`search`, {userId: null});
+    e.preventDefault();
+    global.events.emit(eventNames.SEARCH, {userId: null});
   }
   endCall = e => {
-    global.events.emit(`call_end`, true);
+    e.preventDefault();
+    global.events.emit(eventNames.CALLEND, true);
     this.setState({canStart: false, isMessage: false, isAccept: false});
   }
 
@@ -163,7 +175,9 @@ const mapDispatchToProps = dispatch => {
 
 HomePage.propTypes = {
   youStream: PropTypes.object,
-  strangerStream: PropTypes.object
+  strangerStream: PropTypes.object,
+  actions: React.PropTypes.object,
+  friendActions: React.PropTypes.object
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomePage);

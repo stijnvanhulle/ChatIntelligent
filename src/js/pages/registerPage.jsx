@@ -3,7 +3,7 @@
 * @Date:   2016-12-15T12:54:08+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-17T15:50:42+01:00
+* @Last modified time: 2016-12-19T23:10:20+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -24,7 +24,7 @@ class RegisterPage extends Component {
   addUser = e => {
     e.preventDefault();
     console.log(`saving ${this.state.user}`);
-    this.props.actions.createUser(this.state.user).then(ok => {
+    this.props.actions.createUser(this.state.user).then(() => {
       this.setState({user: {}});
       this.props.router.push(`/`);
     }).catch(err => {
@@ -62,7 +62,7 @@ class RegisterPage extends Component {
   }
 }
 
-const mapStateToProps = (mapState, ownProps) => {
+const mapStateToProps = mapState => {
   return {users: mapState.users, friends: mapState.friends};
 };
 const mapDispatchToProps = dispatch => {
@@ -72,7 +72,8 @@ const mapDispatchToProps = dispatch => {
 };
 
 RegisterPage.propTypes = {
-  actions: PropTypes.object.isRequired
+  actions: React.PropTypes.object
+
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(RegisterPage);
