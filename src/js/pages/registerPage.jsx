@@ -3,11 +3,11 @@
 * @Date:   2016-12-15T12:54:08+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-19T23:10:20+01:00
+* @Last modified time: 2016-12-20T20:21:25+01:00
 * @License: stijnvanhulle.be
 */
 
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as userActions from '../actions/userActions';
@@ -21,7 +21,7 @@ class RegisterPage extends Component {
   constructor(props, context) {
     super(props, context);
   }
-  addUser = e => {
+  onAddUser = e => {
     e.preventDefault();
     console.log(`saving ${this.state.user}`);
     this.props.actions.createUser(this.state.user).then(() => {
@@ -56,7 +56,7 @@ class RegisterPage extends Component {
   render() {
     return (
       <div>
-        <RegisterForm onChange={this.onUserChange} onSave={this.addUser} user={this.state.user} errors={this.state.errors} saving={this.state.saving} />
+        <RegisterForm handleChange={this.onUserChange} handleSave={this.onAddUser} user={this.state.user} errors={this.state.errors} saving={this.state.saving} />
       </div>
     );
   }

@@ -1,6 +1,6 @@
 {
   "name": "devineroulette",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "scripts": {
     "development": "npm run clean && nodemon . & NODE_ENV=development webpack --watch",
     "start": "npm run serve",

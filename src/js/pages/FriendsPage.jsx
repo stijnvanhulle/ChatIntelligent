@@ -3,7 +3,7 @@
 * @Date:   2016-12-14T19:55:16+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T19:32:33+01:00
+* @Last modified time: 2016-12-20T20:21:11+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -12,7 +12,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T19:32:33+01:00
+* @Last modified time: 2016-12-20T20:21:11+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -80,7 +80,7 @@ class FriendsPage extends Component {
         console.log(users);
 
         users = users.filter(item => {
-          if (item && item.id != this.state.meId) {
+          if (item && item.id !== this.state.meId) {
             return item;
           }
         });
@@ -136,7 +136,7 @@ class FriendsPage extends Component {
       </div>
     );
   }
-  messageView_users = item => {
+  messageViewUsers = item => {
     return (
       <div key={item.id}>{item.firstName} {item.lastName}
         <button onClick={this.addFriend.bind(this, item)}>Choose user</button>
@@ -147,7 +147,7 @@ class FriendsPage extends Component {
   render() {
     return (
       <div>
-        <AddFriendForm onChange={this.onFriendChange} user={this.state.user} errors={this.state.errors} /> {this.state.users.map((item, i) => this.messageView_users(item, i))}
+        <AddFriendForm handleChange={this.onFriendChange} user={this.state.user} errors={this.state.errors} /> {this.state.users.map((item, i) => this.messageViewUsers(item, i))}
 
         {this.props.friends.map((item, i) => this.messageView(item, i))}
       </div>
@@ -165,7 +165,8 @@ const mapDispatchToProps = dispatch => {
 };
 
 FriendsPage.propTypes = {
-  actions: React.PropTypes.object
+  actions: React.PropTypes.object,
+  friends: React.PropTypes.array
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(FriendsPage);

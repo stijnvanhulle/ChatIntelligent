@@ -3,7 +3,7 @@
 * @Date:   2016-12-09T15:33:00+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T16:47:28+01:00
+* @Last modified time: 2016-12-20T20:01:49+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -13,11 +13,6 @@ export default function friendsReducer(state = [], action) {
   switch (action.type) {
   case actionsUrl.LOAD_FRIENDS_SUCCESS:
     return action.friends;
-  case actionsUrl.ADD_FRIEND_SUCCESS:
-    return [
-      ...state,
-      Object.assign({}, action.friend)
-    ];
   case actionsUrl.ACCEPT_FRIEND_SUCCESS:
     let newState = [...state];
     newState = newState.map(item => {
@@ -27,6 +22,12 @@ export default function friendsReducer(state = [], action) {
       return item;
     });
     return newState;
+  case actionsUrl.ADD_FRIEND_SUCCESS:
+    return [
+      ...state,
+      Object.assign({}, action.friend)
+    ];
+
   default:
     return state;
 

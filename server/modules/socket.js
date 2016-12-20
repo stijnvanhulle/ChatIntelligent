@@ -3,7 +3,7 @@
 * @Date:   2016-12-09T14:48:19+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T19:29:44+01:00
+* @Last modified time: 2016-12-20T20:24:23+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -173,7 +173,13 @@ module.exports.register = (server, options, next) => {
     };
     users.push(me);
     console.log('Users:', users.length, " ", users);
-    onMessageSocket(io, socket, me);
+    try {
+      onMessageSocket(io, socket, me);
+    } catch (e) {
+      console.log(e);
+      users = [];
+    }
+
   });
 
   next();

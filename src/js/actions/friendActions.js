@@ -3,7 +3,7 @@
 * @Date:   2016-12-09T15:35:26+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-15T17:17:02+01:00
+* @Last modified time: 2016-12-20T20:04:03+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -14,14 +14,14 @@ import actionsUrl from './lib/actionsUrl';
 
 const url = setUrl(_url);
 
-export function addFriend_SUCCESS(friend) {
+export function addFriendSuccess(friend) {
   return {type: actionsUrl.ADD_FRIEND_SUCCESS, friend};
 }
 
-export function loadFriends_SUCCESS(friends) {
+export function loadFriendsSuccess(friends) {
   return {type: actionsUrl.LOAD_FRIENDS_SUCCESS, friends};
 }
-export function acceptFriend_SUCCESS(friend) {
+export function acceptFriendSuccess(friend) {
   return {type: actionsUrl.ACCEPT_FRIEND_SUCCESS, friend};
 }
 
@@ -32,7 +32,7 @@ export function addFriend(meId, friendId) {
     try {
       return axios.post(setParams(url.FRIEND, meId), {friendId: friendId}).then(response => {
         const data = response.data;
-        dispatch(addFriend_SUCCESS(data));
+        dispatch(addFriendSuccess(data));
       }).catch(err => {
         throw err;
       });
@@ -49,7 +49,7 @@ export function acceptFriend(meId, friendId) {
     try {
       return axios.post(setParams(url.FRIEND_ACCEPT, meId), {friendId: friendId}).then(response => {
         const data = response.data;
-        dispatch(acceptFriend_SUCCESS(data));
+        dispatch(acceptFriendSuccess(data));
       }).catch(err => {
         throw err;
       });
@@ -67,9 +67,9 @@ export function loadFriends(meId, query = ``) {
       if (!meId) {
         return Promise.reject(`Not all data filled in from loadfriends`);
       }
-      return axios.get(setParams(url.FRIEND, meId)).then(response => {
+      return axios.get(`${setParams(url.FRIEND, meId)  }?query=${  query}`).then(response => {
         const data = response.data;
-        dispatch(loadFriends_SUCCESS(data));
+        dispatch(loadFriendsSuccess(data));
       }).catch(err => {
         throw err;
       });

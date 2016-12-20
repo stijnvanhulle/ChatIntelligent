@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T19:42:30+01:00
+* @Last modified time: 2016-12-20T20:26:05+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -53,33 +53,35 @@ class App extends Component {
   }
   loadUser = () => {
     let userId;
+    let pathname;
+    const self = this;
     try {
-      const pathname = this.props.location.pathname.replace(`/`, ``);
+      pathname = this.props.location.pathname.replace(`/`, ``);
 
       userId = JSON.parse(localStorage.getItem(`userId`));
       if (userId) {
         this.state.me = {
           userId: parseFloat(userId)
         };
-        axios.get(setParams(url.USER_ONLINE, parseFloat(userId))).then(response => {
-          const data = response.data;
+        axios.get(setParams(url.USER_ONLINE, parseFloat(userId))).then(() => {
+          //const data = response.data;
           //localStorage.setItem(`isOnline`, data.online);
         }).catch(e => {
           console.log(e);
-          if (pathname != `register`) {
+          if (pathname !== `register`) {
             this.props.router.push(`/login`);
           }
         });
       } else {
 
-        if (pathname != `register`) {
+        if (pathname !== `register`) {
           this.props.router.push(`/login`);
         }
 
       }
     } catch (e) {
       console.log(e);
-      if (pathname != `register`) {
+      if (pathname !== `register`) {
         this.props.router.push(`/login`);
       }
     }
@@ -89,13 +91,14 @@ class App extends Component {
   loadAnn = () => {
     let canListen = false;
     const self = this;
+    const annyang = window.annyang || annyang;
     if (annyang) {
       // Let's define a command.
       const commands = {};
       commands[annNames.OK] = () => {
         canListen = true;
       };
-      commands[annNames.CALL] = username => {};
+      //commands[annNames.CALL] = username => {};
 
       // Add our commands to annyang
       annyang.addCommands(commands);
@@ -104,7 +107,7 @@ class App extends Component {
         if (text === annNames.OK) {
           canListen = true;
         }
-        if (text.indexOf(annNames.CALL) != - 1) {
+        if (text.indexOf(annNames.CALL) !== - 1) {
           const username = text.replace(annNames.CALL, ``).trim().toLowerCase();
           if (username) {
             axios.get(`${url.USER}?username=${username}`).then(response => {
@@ -116,7 +119,10 @@ class App extends Component {
                     const data = response.data;
                     if (data.online) {
                       global.events.emit(eventNames.CONNECT, user.id);
-                      self.props.router.push(`/`);
+                      if (self.props.router) {
+                        self.props.router.push(`/`);
+                      }
+
                     } else {
                       console.log(`user not online`);
                     }
@@ -147,7 +153,7 @@ class App extends Component {
 
         }
 
-        if (text.indexOf(annNames.STEVE) != - 1 && text.indexOf(annNames.STEVE) < 2) {
+        if (text.indexOf(annNames.STEVE) !== - 1 && text.indexOf(annNames.STEVE) < 2) {
           const what = text.replace(annNames.STEVE, ``).trim().toLowerCase();
           if (what) {
             self.socket.emit(socketNames.SPEECH, what);
@@ -158,12 +164,11 @@ class App extends Component {
 
       // Start listening.
       annyang.start();
-      console.log(annyang.isListening());
     }
 
   }
   loadSocket = () => {
-    const self = this;
+    //const self = this;
     this.socket = io(global.url);
     this.socket.on(socketNames.CONNECT, () => {
       try {
@@ -237,19 +242,19 @@ class App extends Component {
 
   handleWSNewFriend = obj => {
     console.log(`new friend`, obj);
-    if (obj.user2 == this.state.me.userId) {
+    if (obj.user2 === this.state.me.userId) {
       global.events.emit(eventNames.NEWFRIEND, obj);
     }
     global.events.emit(eventNames.LOADFRIENDS);
 
   }
-  handleWSNewFriendAccepted = obj => {
+  handleWSNewFriendAccepted = () => {
     global.events.emit(eventNames.LOADFRIENDS);
 
   }
 
   handleWSCall = ({stranger, me}) => {
-    if (stranger.socketId == this.state.me.socketId) {
+    if (stranger.socketId === this.state.me.socketId) {
       global.events.emit(eventNames.CANSTART, true);
       global.events.emit(eventNames.NEWCALL, stranger);
     }
@@ -261,7 +266,7 @@ class App extends Component {
       this.peer.reconnect();
     }
     if (this.state.me) {
-      if (item.socketId == this.state.me.socketId || item.socketId == this.state.me.paired) {
+      if (item.socketId === this.state.me.socketId || item.socketId === this.state.me.paired) {
         this.reset();
       }
     }
@@ -285,16 +290,14 @@ class App extends Component {
     speak(text);
   }
   handleWSFound = ({stranger, me}) => {
-    if (this.state.me && stranger.userId == this.state.me.userId) {
-      this.state.me = stranger;
-      this.state.stranger = me;
+    if (this.state.me && stranger.userId === this.state.me.userId) {
+      this.setState({me: stranger, stranger: me});
     } else {
-      this.state.me = me;
-      this.state.stranger = stranger;
+      this.setState({me, stranger});
     }
 
     try {
-      if (stranger.socketId != this.state.me.socketId) {
+      if (stranger.socketId !== this.state.me.socketId) {
         const {youStream} = this.state;
         const call = this.peer.call(this.state.stranger.socketId, youStream);
         if (call) {
@@ -330,7 +333,7 @@ class App extends Component {
       secure: true
     });
     this.peer.on(`open`, () => {
-      const self = this;
+      //const self = this;
       console.log(`PEER OPEN`);
     });
 
@@ -366,10 +369,10 @@ class App extends Component {
   }
 
   initStream() {
-    navigator.mediaDevices.getUserMedia = navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.mediaDevices.getUserMedia;
 
     navigator.getUserMedia({
-      video: true, audio: false //TODO: change to true
+      video: true, audio: true //TODO: change to true
     }, this.handleYouStream, this.handleYouStreamError);
   }
 
@@ -389,7 +392,8 @@ class App extends Component {
 
 App.propTypes = {
   children: PropTypes.object.isRequired,
-  actions: PropTypes.object.isRequired
+  actions: PropTypes.object.isRequired,
+  location: PropTypes.object
 };
 
 //const mapStateToProps = (mapState, ownProps) => {
