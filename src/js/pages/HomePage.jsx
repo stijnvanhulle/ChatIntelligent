@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T18:40:01+01:00
+* @Last modified time: 2016-12-20T19:39:53+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -55,7 +55,7 @@ class HomePage extends Component {
 
     global.events.on(eventNames.CONNECT, user => {
       global.events.emit(`search`, user);
-      this.setState({canStart: true});
+      //this.setState({canStart: true});
     });
 
     global.events.on(eventNames.NEWFRIEND, friend => {

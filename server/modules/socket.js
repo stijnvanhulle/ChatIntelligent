@@ -3,7 +3,7 @@
 * @Date:   2016-12-09T14:48:19+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-19T22:59:28+01:00
+* @Last modified time: 2016-12-20T19:29:44+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -69,8 +69,6 @@ const onMessageSocket = (io, socket, me) => {
 
   });
 
-  
-
   socket.on(socketNames.SEARCH, (obj) => {
     const {userId} = obj;
     let stranger;
@@ -123,9 +121,12 @@ const onMessageSocket = (io, socket, me) => {
       }
 
     });
-    io.emit(socketNames.CALL_END, stranger);
-    io.emit(socketNames.CALL_END, me);
-
+    if (stranger) {
+      io.emit(socketNames.CALL_END, stranger);
+    }
+    if (me) {
+      io.emit(socketNames.CALL_END, me);
+    }
 
     console.log('Users:', users.length, " ", users);
   });

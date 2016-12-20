@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-19T23:01:07+01:00
+* @Last modified time: 2016-12-20T19:42:30+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -166,7 +166,12 @@ class App extends Component {
     const self = this;
     this.socket = io(global.url);
     this.socket.on(socketNames.CONNECT, () => {
-      this.initPeer();
+      try {
+        this.initPeer();
+      } catch (e) {
+        console.log(e);
+        this.reset();
+      }
 
       let userId;
       try {
