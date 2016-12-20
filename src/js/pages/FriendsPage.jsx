@@ -3,7 +3,7 @@
 * @Date:   2016-12-14T19:55:16+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-19T23:10:08+01:00
+* @Last modified time: 2016-12-20T18:48:07+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -12,7 +12,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-19T23:10:08+01:00
+* @Last modified time: 2016-12-20T18:48:07+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -99,7 +99,8 @@ class FriendsPage extends Component {
     const user = this.state.user;
     user[field] = e.target.value.toString();
 
-    return this.setState({user: user});
+    this.setState({user: user});
+    this.findFriend(e);
   }
   callFriend = userId => {
     const self = this;
@@ -107,7 +108,10 @@ class FriendsPage extends Component {
       const data = response.data;
       if (data.online) {
         global.events.emit(eventNames.CONNECT, userId);
-        self.props.router.push(`/`);
+        if (self.props.router) {
+          self.props.router.push(`/`);
+        }
+
       } else {
         console.log(`user not online`);
       }
@@ -143,7 +147,7 @@ class FriendsPage extends Component {
   render() {
     return (
       <div>
-        <AddFriendForm onChange={this.onFriendChange} onSave={this.findFriend} user={this.state.user} errors={this.state.errors} saving={this.state.saving} /> {this.state.users.map((item, i) => this.messageView_users(item, i))}
+        <AddFriendForm onChange={this.onFriendChange} user={this.state.user} errors={this.state.errors} /> {this.state.users.map((item, i) => this.messageView_users(item, i))}
 
         {this.props.friends.map((item, i) => this.messageView(item, i))}
       </div>

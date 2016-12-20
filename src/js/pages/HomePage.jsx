@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-19T23:07:07+01:00
+* @Last modified time: 2016-12-20T18:40:01+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -16,6 +16,7 @@ import eventNames from '../lib/const/eventNames';
 import Video from '../components/Video';
 import Accept from '../components/Accept';
 import global from '../lib/const/global';
+import FriendsPage from './FriendsPage';
 
 class HomePage extends Component {
   state = {
@@ -121,14 +122,24 @@ class HomePage extends Component {
       if (onlyYou) {
         return (
           <div>
-            <Video stream={this.props.youStream} muted={true} />
+            <div className='friends'>
+              <FriendsPage />
+            </div>
+            <div className='chat'>
+              <Video stream={this.props.youStream} muted={true} />
+            </div>
           </div>
         );
       } else {
         return (
           <div>
-            <Video stream={this.props.youStream} muted={true} />
-            <Video stream={this.props.strangerStream} muted={false} />
+            <div className='friends'>
+              <FriendsPage />
+            </div>
+            <div className='chat'>
+              <Video stream={this.props.youStream} muted={true} />
+              <Video stream={this.props.strangerStream} muted={false} />
+            </div>
           </div>
         );
       }
@@ -138,7 +149,8 @@ class HomePage extends Component {
     if (isMessage || isAccept) {
       return (
         <div>
-          <Accept text={this.state.text} onAccept={this.onAccept} onDecline={this.onDecline} /> {getVideo(false)}
+          <Accept text={this.state.text} onAccept={this.onAccept} onDecline={this.onDecline} />
+          {getVideo(false)}
         </div>
       );
     } else if (this.state.canStart) {
