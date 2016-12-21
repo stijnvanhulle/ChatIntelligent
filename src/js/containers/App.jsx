@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T20:26:05+01:00
+* @Last modified time: 2016-12-21T14:29:17+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -30,6 +30,11 @@ class App extends Component {
     //this.loadSocket();
     this.loadUser();
     this.loadAnn();
+
+
+    global.events.on(eventNames.LOGIN, () => {
+      //this.loadUser();
+    });
   }
   state = {
     socket: null,
@@ -89,24 +94,24 @@ class App extends Component {
   }
 
   loadAnn = () => {
-    let canListen = false;
     const self = this;
     const annyang = window.annyang || annyang;
     if (annyang) {
       // Let's define a command.
       const commands = {};
       commands[annNames.OK] = () => {
-        canListen = true;
+
       };
       //commands[annNames.CALL] = username => {};
 
       // Add our commands to annyang
       annyang.addCommands(commands);
       annyang.addCallback(`result`, userSaid => {
+
         const text = userSaid[0].trim().toLowerCase();
-        if (text === annNames.OK) {
-          canListen = true;
-        }
+
+        global.events.emit(eventNames.LISTENING, text);
+
         if (text.indexOf(annNames.CALL) !== - 1) {
           const username = text.replace(annNames.CALL, ``).trim().toLowerCase();
           if (username) {
@@ -140,18 +145,14 @@ class App extends Component {
 
         }
 
-        setTimeout(function() {
-          canListen = false;
-        }, 5000);
 
-        console.log(userSaid, canListen);
-        if (canListen) {
-          self.socket.emit(socketNames.SPEECH, text);
-          if (text !== annNames.OK) {
+        console.log(userSaid);
+        self.socket.emit(socketNames.SPEECH, text);
+        if (text !== annNames.OK) {
             //canListen = false;
-          }
-
         }
+
+
 
         if (text.indexOf(annNames.STEVE) !== - 1 && text.indexOf(annNames.STEVE) < 2) {
           const what = text.replace(annNames.STEVE, ``).trim().toLowerCase();
@@ -287,6 +288,7 @@ class App extends Component {
   // WS
 
   handleWSpeechPost = text => {
+    global.events.emit(eventNames.SPEECH, text);
     speak(text);
   }
   handleWSFound = ({stranger, me}) => {

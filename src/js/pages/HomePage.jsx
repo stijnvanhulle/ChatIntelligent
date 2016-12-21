@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T20:21:17+01:00
+* @Last modified time: 2016-12-21T14:13:34+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -15,8 +15,11 @@ import * as friendActions from '../actions/friendActions';
 import eventNames from '../lib/const/eventNames';
 import Video from '../components/Video';
 import Accept from '../components/Accept';
+import Intelligent from '../components/Intelligent';
 import global from '../lib/const/global';
+import url from '../actions/lib/url';
 import FriendsPage from './FriendsPage';
+import axios from 'axios';
 
 class HomePage extends Component {
   state = {
@@ -25,14 +28,46 @@ class HomePage extends Component {
     isAccept: false,
     youStream: null,
     strangerStream: null,
-    meId: null,
+    me: null,
     friend: null,
-    canStart: false
+    canStart: false,
+    what: ``,
+    speech: ``
   }
 
   constructor(props, context) {
     super(props, context);
     const self = this;
+
+    let userId;
+    try {
+      userId = JSON.parse(localStorage.getItem(`userId`));
+      this.state.me = userId;
+      if (userId) {
+        this.props.friendActions.loadFriends(userId);
+      } else {
+        console.log(`no user id`);
+        if (self.context.router) {
+          self.context.router.push(`/login`);
+        }
+
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
+    global.events.on(eventNames.LISTENING, what => {
+      if (what) {
+        this.setState({what});
+      }
+    });
+
+    global.events.on(eventNames.SPEECH, speech => {
+      if (speech) {
+        this.setState({speech});
+      }
+    });
+
     global.events.on(eventNames.CANSTART, ok => {
       if (ok) {
         self.setState({canStart: ok});
@@ -59,20 +94,10 @@ class HomePage extends Component {
     });
 
     global.events.on(eventNames.NEWFRIEND, friend => {
-      self.setState({isMessage: true, text: `hallo, accpet`});
-      let userId;
-      try {
-        userId = JSON.parse(localStorage.getItem(`userId`));
-        self.setState({meId: userId, friend});
-        if (userId) {
-          this.props.friendActions.loadFriends(userId);
-        } else {
-          console.log(`no user id`);
-          self.context.router.push(`/login`);
-        }
-      } catch (e) {
-        console.log(e);
-      }
+      self.setState({isMessage: true, text: `hallo, accpet`, friend});
+
+      this.props.friendActions.loadFriends(this.state.me);
+
     });
   }
 
@@ -114,9 +139,25 @@ class HomePage extends Component {
     global.events.emit(eventNames.CALLEND, true);
     this.setState({canStart: false, isMessage: false, isAccept: false});
   }
+  onLogOff = e => {
+    e.preventDefault();
+    if (this.state.me)
+      axios.post(url.LOGOFF, {userId: this.state.me}).then(response => {
+        const data = response.data;
+        localStorage.setItem(`userId`, null);
+        if (this.props.router) {
+          this.props.router.push(`/login`);
+        }
+
+      }).catch(err => {
+        console.log(err);
+      });
+  }
 
   render() {
     const {isMessage, isAccept} = this.state;
+
+    let div;
 
     const getVideo = (onlyYou = false) => {
       if (onlyYou) {
@@ -147,14 +188,13 @@ class HomePage extends Component {
     };
 
     if (isMessage || isAccept) {
-      return (
+      div = (
         <div>
-          <Accept text={this.state.text} handleAccept={this.onAccept} handleDecline={this.onDecline} />
-          {getVideo(false)}
+          <Accept text={this.state.text} handleAccept={this.onAccept} handleDecline={this.onDecline} /> {getVideo(false)}
         </div>
       );
     } else if (this.state.canStart) {
-      return (
+      div = (
         <div>
           <button className='endCall' onClick={this.endCall}>End call</button>
           {getVideo(false)}
@@ -162,13 +202,20 @@ class HomePage extends Component {
       );
 
     } else {
-      return (
+      div = (
         <div>
           {getVideo(true)}
           <button onClick={this.onRandom}>Random user</button>
         </div>
       );
     }
+
+    return (
+      <div>
+        <Intelligent speech={this.state.speech} what={this.state.what} />
+        <button onClick={this.onLogOff}>Log off</button>
+        {div}</div>
+    );
 
   }
 

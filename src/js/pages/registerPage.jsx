@@ -3,7 +3,7 @@
 * @Date:   2016-12-15T12:54:08+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T20:21:25+01:00
+* @Last modified time: 2016-12-21T13:51:47+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -12,6 +12,10 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as userActions from '../actions/userActions';
 import RegisterForm from '../components/forms/registerForm';
+import global from '../lib/const/global';
+import eventNames from '../lib/const/eventNames';
+import url from '../actions/lib/url';
+import axios from 'axios';
 class RegisterPage extends Component {
   state = {
     user: {},
@@ -25,12 +29,35 @@ class RegisterPage extends Component {
     e.preventDefault();
     console.log(`saving ${this.state.user}`);
     this.props.actions.createUser(this.state.user).then(() => {
-      this.setState({user: {}});
-      this.props.router.push(`/`);
+
+      this.login(this.state.user.username, this.state.user.password);
+
     }).catch(err => {
+      //show message cannot register
       console.log(err);
     });
 
+  }
+  login = (username, password) => {
+    let user;
+    axios.post(url.LOGIN, {
+      username: username,
+      password: password
+    }).then(response => {
+      const data = response.data;
+      user = data;
+      if (user.id) {
+        console.log(`login`, data);
+        localStorage.setItem(`userId`, user.id);
+        this.setState({user: {}});
+
+        global.events.emit(eventNames.LOGIN, true);
+        this.props.router.push(`/`);
+      }
+
+    }).catch(err => {
+      console.log(err);
+    });
   }
   onUserChange = e => {
     const field = e.target.name;

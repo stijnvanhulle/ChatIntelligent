@@ -3,7 +3,7 @@
 * @Date:   2016-12-05T14:32:42+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T20:07:10+01:00
+* @Last modified time: 2016-12-21T13:45:19+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -18,13 +18,13 @@ const LoginForm = ({user, handleSave, handleChange, saving, errors}) => {
         ? user.username
         : ``} handleChange={handleChange} error={errors.username} />
 
-      <TextInput name='password' label='password' value={user.password
+      <TextInput type='password' name='password' label='password' value={user.password
         ? user.password
         : ``} handleChange={handleChange} error={errors.password} />
 
       <input type='submit' disabled={saving} value={saving
-        ? `Saving...`
-        : `Save`} className='btn btn-primary' onClick={handleSave} />
+        ? `Loging in...`
+        : `Login`} className='btn btn-primary' onClick={handleSave} />
     </form>
   );
 };

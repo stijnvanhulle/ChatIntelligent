@@ -3,7 +3,7 @@
 * @Date:   2016-12-14T19:55:16+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T20:21:11+01:00
+* @Last modified time: 2016-12-21T14:46:01+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -12,7 +12,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-20T20:21:11+01:00
+* @Last modified time: 2016-12-21T14:46:01+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -45,7 +45,10 @@ class FriendsPage extends Component {
         this.props.actions.loadFriends(userId);
       } else {
         console.log(`no user id`);
-        this.context.router.push(`/login`);
+        if (this.context.router) {
+          this.context.router.push(`/login`);
+        }
+
       }
     } catch (e) {
       console.log(e);
@@ -58,13 +61,25 @@ class FriendsPage extends Component {
   }
   addFriend = item => {
     //login
+    //
     const user = item;
-    if (user.username && user.id) {
-      this.props.actions.addFriend(this.state.meId, user.id).then(() => {
-        console.log(`ok`);
-      }).catch(err => {
-        console.log(err);
-      });
+
+    const contains = this.props.friends.filter(item => {
+      if (item.user2.id == user.id && item.isConfirmed) {
+        return item;
+      }
+    });
+    if (contains.length > 0) {
+      console.log(`already friend`, contains);
+    } else {
+      if (user.username && user.id) {
+        this.props.actions.addFriend(this.state.meId, user.id).then(() => {
+          console.log(`ok`);
+          this.setState({user: {}});
+        }).catch(err => {
+          console.log(err);
+        });
+      }
     }
 
   }
@@ -122,19 +137,37 @@ class FriendsPage extends Component {
   }
 
   messageView = item => {
-    let confirmed;
+    let confirmed,
+      online;
     if (item.isConfirmed) {
       confirmed = `confirmed`;
     } else {
       confirmed = `not confirmed`;
     }
-    return (
-      <div key={item.user2.id}>{item.user2.firstName} {item.user2.lastName}
-        -- {confirmed}
-        {item.user2.online}
-        <button disabled={!item.isConfirmed} onClick={this.callFriend.bind(this, item.user2.id)}>Connect</button>
-      </div>
-    );
+    if (item.user2.online) {
+      online = `online`;
+    } else {
+      online = `offline`;
+    }
+
+    if (item.isConfirmed) {
+      return (
+        <div key={item.user2.id}>{item.user2.firstName} {item.user2.lastName}
+          -- {confirmed}
+          -- {online}
+          <button disabled={!item.user2.online} onClick={this.callFriend.bind(this, item.user2.id)}>Connect</button>
+        </div>
+      );
+    } else {
+      return (
+        <div key={item.user2.id}>{item.user2.firstName} {item.user2.lastName}
+          -- {confirmed}
+          -- {online}
+          <button disabled={!item.user2.online} onClick={this.addFriend.bind(this, item.user2)}>Send invite</button>
+        </div>
+      );
+    }
+
   }
   messageViewUsers = item => {
     return (
