@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-14T15:47:00+01:00
+* @Last modified time: 2016-12-21T23:47:22+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -16,7 +16,7 @@ const mongoose = require("mongoose");
 const Server = require('hapi').Server;
 //const WebpackPlugin = require('hapi-webpack-plugin');
 const port = process.env.PORT || 3000;
-const mongo=process.env.mongo|| 'localhost';
+const mongo=process.env.mongo|| '51.254.211.109';
 const {version}= require('../package.json');
 
 const server = new Server({
