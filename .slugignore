@@ -1,10 +1,11 @@
 /src/*
 nodemon.json
 *.config.json
+README.md
+
 .babelrc
 .editorconfig
 .env
-.eslintignore
 .eslintrc
-.stylelintrc
-README.md
+.eslintignore
+.styleintrc
