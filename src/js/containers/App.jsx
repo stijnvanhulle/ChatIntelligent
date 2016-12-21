@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-21T14:29:17+01:00
+* @Last modified time: 2016-12-21T14:56:05+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -30,7 +30,6 @@ class App extends Component {
     //this.loadSocket();
     this.loadUser();
     this.loadAnn();
-
 
     global.events.on(eventNames.LOGIN, () => {
       //this.loadUser();
@@ -99,9 +98,7 @@ class App extends Component {
     if (annyang) {
       // Let's define a command.
       const commands = {};
-      commands[annNames.OK] = () => {
-
-      };
+      commands[annNames.OK] = () => {};
       //commands[annNames.CALL] = username => {};
 
       // Add our commands to annyang
@@ -109,7 +106,7 @@ class App extends Component {
       annyang.addCallback(`result`, userSaid => {
 
         const text = userSaid[0].trim().toLowerCase();
-
+        console.log(userSaid, text);
         global.events.emit(eventNames.LISTENING, text);
 
         if (text.indexOf(annNames.CALL) !== - 1) {
@@ -145,14 +142,10 @@ class App extends Component {
 
         }
 
-
-        console.log(userSaid);
         self.socket.emit(socketNames.SPEECH, text);
         if (text !== annNames.OK) {
-            //canListen = false;
+          //canListen = false;
         }
-
-
 
         if (text.indexOf(annNames.STEVE) !== - 1 && text.indexOf(annNames.STEVE) < 2) {
           const what = text.replace(annNames.STEVE, ``).trim().toLowerCase();
