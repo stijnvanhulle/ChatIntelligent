@@ -3,7 +3,7 @@
 * @Date:   2016-12-05T14:32:42+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-22T16:59:13+01:00
+* @Last modified time: 2016-12-22T17:08:36+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -26,28 +26,21 @@ class Accept extends Component {
 
   render() {
     const {show} = this.state;
-    return (
-      <div className='message'>
-        <h1>Accept</h1>
-
-        <SweetAlert show={show} confirmButtonText='Accept' cancelButtonText='Reject' title='Accept' showCancelButton text={this.props.text} onConfirm={() => {
-          this.setState({show: false});
-          this.props.handleAccept();
-        }} onCancel={() => {
-          this.setState({show: false});
-          this.props.handleDecline();
-        }} onEscapeKey={() => this.setState({show: false})} onOutsideClick={() => this.setState({show: false})} />
-
-      </div>
-    );
+    return (<SweetAlert show={show} confirmButtonText='Accept' cancelButtonText='Reject' title='Accept' showCancelButton text={this.props.text} onConfirm={() => {
+      this.setState({show: false});
+      this.props.handleAccept();
+    }} onCancel={() => {
+      this.setState({show: false});
+      this.props.handleDecline();
+    }} onEscapeKey={() => this.setState({show: false})} onOutsideClick={() => this.setState({show: false})} />);
   }
 
 }
 
 Accept.propTypes = {
-  text: React.PropTypes.string,
-  handleAccept: React.PropTypes.func.isRequired,
-  handleDecline: React.PropTypes.func.isRequired
+  text: PropTypes.string,
+  handleAccept: PropTypes.func.isRequired,
+  handleDecline: PropTypes.func.isRequired
 };
 
 export default Accept;

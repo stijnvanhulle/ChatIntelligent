@@ -3,7 +3,7 @@
 * @Date:   2016-12-15T12:54:08+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-21T13:51:47+01:00
+* @Last modified time: 2016-12-22T17:16:37+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -14,13 +14,15 @@ import * as userActions from '../actions/userActions';
 import RegisterForm from '../components/forms/registerForm';
 import global from '../lib/const/global';
 import eventNames from '../lib/const/eventNames';
+import Message from '../components/Message';
 import url from '../actions/lib/url';
 import axios from 'axios';
 class RegisterPage extends Component {
   state = {
     user: {},
     errors: {},
-    saving: false
+    saving: false,
+    errorText: ``
   }
   constructor(props, context) {
     super(props, context);
@@ -40,6 +42,7 @@ class RegisterPage extends Component {
   }
   login = (username, password) => {
     let user;
+    this.setState({errorText: ``});
     axios.post(url.LOGIN, {
       username: username,
       password: password
@@ -51,11 +54,13 @@ class RegisterPage extends Component {
         localStorage.setItem(`userId`, user.id);
         this.setState({user: {}});
 
+        this.setState({errorText: ``});
         global.events.emit(eventNames.LOGIN, true);
         this.props.router.push(`/`);
       }
 
     }).catch(err => {
+      this.setState({errorText: `Cannot register with this user, check data`});
       console.log(err);
     });
   }
@@ -81,11 +86,28 @@ class RegisterPage extends Component {
   }
 
   render() {
-    return (
-      <div>
-        <RegisterForm handleChange={this.onUserChange} handleSave={this.onAddUser} user={this.state.user} errors={this.state.errors} saving={this.state.saving} />
-      </div>
-    );
+    if (this.state.errors.length > 0 || this.state.errorText) {
+      let text = `Something not correct`;
+      if (this.state.errorText) {
+
+        text = this.state.errorText;
+      }
+
+      return (
+        <div>
+          <Message text={text} />
+          <RegisterForm handleChange={this.onUserChange} handleSave={this.onAddUser} user={this.state.user} errors={this.state.errors} saving={this.state.saving} />
+        </div>
+      );
+
+    } else {
+      return (
+        <div>
+          <RegisterForm handleChange={this.onUserChange} handleSave={this.onAddUser} user={this.state.user} errors={this.state.errors} saving={this.state.saving} />
+        </div>
+      );
+    }
+
   }
 }
 
