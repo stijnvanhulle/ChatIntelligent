@@ -3,7 +3,11 @@
 * @Date:   2016-12-05T14:32:42+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
+<<<<<<< HEAD
 * @Last modified time: 2016-12-22T14:25:45+01:00
+=======
+* @Last modified time: 2016-12-22T14:26:49+01:00
+>>>>>>> develop
 * @License: stijnvanhulle.be
 */
 

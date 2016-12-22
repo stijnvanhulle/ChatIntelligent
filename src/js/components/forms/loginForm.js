@@ -3,7 +3,7 @@
 * @Date:   2016-12-05T14:32:42+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-22T14:19:52+01:00
+* @Last modified time: 2016-12-22T14:40:03+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -12,7 +12,7 @@ import TextInput from '../common/textInput';
 
 const LoginForm = ({user, handleSave, handleChange, saving, errors}) => {
   return (
-    <form>
+    <form onSubmit={handleSave}>
       <h1>Login</h1>
       <TextInput name='username' required={true} label='username' value={user.username
         ? user.username
@@ -26,7 +26,7 @@ const LoginForm = ({user, handleSave, handleChange, saving, errors}) => {
 
       <input type='submit' disabled={saving} value={saving
         ? `Loging in...`
-        : `Login`} className='btn btn-primary' onClick={handleSave} />
+        : `Login`} className='btn btn-primary' />
     </form>
   );
 };
