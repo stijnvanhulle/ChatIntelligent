@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-22T15:00:29+01:00
+* @Last modified time: 2016-12-22T15:06:45+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -142,7 +142,7 @@ class App extends Component {
 
         }
 
-        self.socket.emit(socketNames.SPEECH, {text, me: this.state.me});
+        //self.socket.emit(socketNames.SPEECH, {text, me: this.state.me});
         if (text !== annNames.OK) {
           //canListen = false;
         }
