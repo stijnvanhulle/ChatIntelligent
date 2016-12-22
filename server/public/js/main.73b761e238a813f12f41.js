@@ -7656,20 +7656,23 @@ var _jsxFileName = '/Users/stijnvanhulle/GitHub/EXW-20162017-06/src/js/component
 * @Date:   2016-12-05T14:31:57+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-21T13:44:49+01:00
+* @Last modified time: 2016-12-22T14:18:45+01:00
 * @License: stijnvanhulle.be
 */
 
 
 
 var TextInput = function TextInput(_ref) {
+  var _React$createElement;
+
   var name = _ref.name,
       label = _ref.label,
       handleChange = _ref.handleChange,
       placeholder = _ref.placeholder,
       value = _ref.value,
       error = _ref.error,
-      type = _ref.type;
+      type = _ref.type,
+      required = _ref.required;
 
   var wrapperClass = 'form-group';
   if (error && error.length > 0) {
@@ -7677,18 +7680,24 @@ var TextInput = function TextInput(_ref) {
   }
   if (!type) type = 'text';
 
+  if (required) {
+    required = 'required';
+  } else {
+    required = '';
+  }
+
   return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
     'div',
     { className: wrapperClass, __source: {
         fileName: _jsxFileName,
-        lineNumber: 29
+        lineNumber: 36
       }
     },
     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
       'label',
       { htmlFor: name, __source: {
           fileName: _jsxFileName,
-          lineNumber: 30
+          lineNumber: 37
         }
       },
       label
@@ -7697,20 +7706,19 @@ var TextInput = function TextInput(_ref) {
       'div',
       { className: 'field', __source: {
           fileName: _jsxFileName,
-          lineNumber: 31
+          lineNumber: 38
         }
       },
-      __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: type, name: name, className: 'form-control', placeholder: placeholder, value: value, onChange: handleChange, __source: {
-          fileName: _jsxFileName,
-          lineNumber: 32
-        }
-      }),
+      __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', (_React$createElement = { required: required, type: type }, _React$createElement['required'] = required, _React$createElement.name = name, _React$createElement.className = 'form-control', _React$createElement.placeholder = placeholder, _React$createElement.value = value, _React$createElement.onChange = handleChange, _React$createElement.__source = {
+        fileName: _jsxFileName,
+        lineNumber: 39
+      }, _React$createElement)),
       ' ',
       error && __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
         'div',
         { className: 'alert alert-danger', __source: {
             fileName: _jsxFileName,
-            lineNumber: 32
+            lineNumber: 39
           }
         },
         error
@@ -7723,6 +7731,7 @@ TextInput.propTypes = {
   name: __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].string.isRequired,
   label: __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].string.isRequired,
   handleChange: __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].func.isRequired,
+  required: __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].bool,
   placeholder: __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].string,
   value: __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].string,
   type: __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].string,
@@ -20217,7 +20226,7 @@ var _jsxFileName = '/Users/stijnvanhulle/GitHub/EXW-20162017-06/src/js/component
 * @Date:   2016-12-05T14:32:42+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-21T13:45:19+01:00
+* @Last modified time: 2016-12-22T14:40:03+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -20233,8 +20242,7 @@ var LoginForm = function LoginForm(_ref) {
 
   return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
     'form',
-    {
-      __source: {
+    { onSubmit: handleSave, __source: {
         fileName: _jsxFileName,
         lineNumber: 15
       }
@@ -20249,19 +20257,28 @@ var LoginForm = function LoginForm(_ref) {
       },
       'Login'
     ),
-    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__common_textInput__["a" /* default */], { name: 'username', label: 'username', value: user.username ? user.username : '', handleChange: handleChange, error: errors.username, __source: {
+    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__common_textInput__["a" /* default */], { name: 'username', required: true, label: 'username', value: user.username ? user.username : '', handleChange: handleChange, error: errors.username, __source: {
         fileName: _jsxFileName,
         lineNumber: 17
       }
     }),
-    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__common_textInput__["a" /* default */], { type: 'password', name: 'password', label: 'password', value: user.password ? user.password : '', handleChange: handleChange, error: errors.password, __source: {
+    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__common_textInput__["a" /* default */], { type: 'password', required: true, name: 'password', label: 'password', value: user.password ? user.password : '', handleChange: handleChange, error: errors.password, __source: {
         fileName: _jsxFileName,
         lineNumber: 21
       }
     }),
-    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'submit', disabled: saving, value: saving ? 'Loging in...' : 'Login', className: 'btn btn-primary', onClick: handleSave, __source: {
+    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+      'a',
+      { href: '/register', __source: {
+          fileName: _jsxFileName,
+          lineNumber: 25
+        }
+      },
+      'Register'
+    ),
+    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'submit', disabled: saving, value: saving ? 'Loging in...' : 'Login', className: 'btn btn-primary', __source: {
         fileName: _jsxFileName,
-        lineNumber: 25
+        lineNumber: 27
       }
     })
   );
@@ -20291,7 +20308,7 @@ var _jsxFileName = '/Users/stijnvanhulle/GitHub/EXW-20162017-06/src/js/component
 * @Date:   2016-12-05T14:32:42+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-21T14:29:18+01:00
+* @Last modified time: 2016-12-22T14:26:49+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -20307,8 +20324,7 @@ var RegisterForm = function RegisterForm(_ref) {
 
   return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
     'form',
-    {
-      __source: {
+    { onSubmit: handleSave, __source: {
         fileName: _jsxFileName,
         lineNumber: 15
       }
@@ -20323,37 +20339,37 @@ var RegisterForm = function RegisterForm(_ref) {
       },
       'Registeer'
     ),
-    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__common_textInput__["a" /* default */], { name: 'firstName', label: 'firstName', value: user.firstName ? user.firstName : '', handleChange: handleChange, error: errors.firstName, __source: {
+    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__common_textInput__["a" /* default */], { name: 'firstName', required: true, label: 'firstName', value: user.firstName ? user.firstName : '', handleChange: handleChange, error: errors.firstName, __source: {
         fileName: _jsxFileName,
         lineNumber: 17
       }
     }),
-    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__common_textInput__["a" /* default */], { name: 'lastName', label: 'lastName', value: user.lastName ? user.lastName : '', handleChange: handleChange, error: errors.lastName, __source: {
+    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__common_textInput__["a" /* default */], { name: 'lastName', required: true, label: 'lastName', value: user.lastName ? user.lastName : '', handleChange: handleChange, error: errors.lastName, __source: {
         fileName: _jsxFileName,
         lineNumber: 19
       }
     }),
-    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__common_textInput__["a" /* default */], { name: 'username', label: 'username', value: user.username ? user.username : '', handleChange: handleChange, error: errors.username, __source: {
+    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__common_textInput__["a" /* default */], { name: 'username', required: true, label: 'username', value: user.username ? user.username : '', handleChange: handleChange, error: errors.username, __source: {
         fileName: _jsxFileName,
         lineNumber: 21
       }
     }),
-    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__common_textInput__["a" /* default */], { name: 'email', type: 'email', label: 'email', value: user.email ? user.email : '', handleChange: handleChange, error: errors.email, __source: {
+    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__common_textInput__["a" /* default */], { name: 'email', required: true, type: 'email', label: 'email', value: user.email ? user.email : '', handleChange: handleChange, error: errors.email, __source: {
         fileName: _jsxFileName,
         lineNumber: 23
       }
     }),
-    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__common_textInput__["a" /* default */], { name: 'password', type: 'password', label: 'password', value: user.password ? user.password : '', handleChange: handleChange, error: errors.password, __source: {
+    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__common_textInput__["a" /* default */], { name: 'password', required: true, type: 'password', label: 'password', value: user.password ? user.password : '', handleChange: handleChange, error: errors.password, __source: {
         fileName: _jsxFileName,
         lineNumber: 25
       }
     }),
-    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__common_textInput__["a" /* default */], { name: 'passwordRepeat', type: 'password', label: 'passwordRepeat', value: user.passwordRepeat ? user.passwordRepeat : '', handleChange: handleChange, __source: {
+    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__common_textInput__["a" /* default */], { name: 'passwordRepeat', required: true, type: 'password', label: 'passwordRepeat', value: user.passwordRepeat ? user.passwordRepeat : '', handleChange: handleChange, __source: {
         fileName: _jsxFileName,
         lineNumber: 26
       }
     }),
-    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'submit', disabled: saving, value: saving ? 'Register...' : 'Register', className: 'btn btn-primary', onClick: handleSave, __source: {
+    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'submit', disabled: saving, value: saving ? 'Register...' : 'Register', className: 'btn btn-primary', __source: {
         fileName: _jsxFileName,
         lineNumber: 29
       }
@@ -20412,7 +20428,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-21T14:56:05+01:00
+* @Last modified time: 2016-12-22T14:54:39+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -20532,7 +20548,7 @@ var App = function (_Component) {
             }
           }
 
-          self.socket.emit(__WEBPACK_IMPORTED_MODULE_4__lib_const_socketNames___default.a.SPEECH, text);
+          self.socket.emit(__WEBPACK_IMPORTED_MODULE_4__lib_const_socketNames___default.a.SPEECH, { text: text, me: _this.state.me });
           if (text !== __WEBPACK_IMPORTED_MODULE_6__lib_const_annNames___default.a.OK) {
             //canListen = false;
           }
@@ -20540,7 +20556,7 @@ var App = function (_Component) {
           if (text.indexOf(__WEBPACK_IMPORTED_MODULE_6__lib_const_annNames___default.a.STEVE) !== -1 && text.indexOf(__WEBPACK_IMPORTED_MODULE_6__lib_const_annNames___default.a.STEVE) < 2) {
             var what = text.replace(__WEBPACK_IMPORTED_MODULE_6__lib_const_annNames___default.a.STEVE, '').trim().toLowerCase();
             if (what) {
-              self.socket.emit(__WEBPACK_IMPORTED_MODULE_4__lib_const_socketNames___default.a.SPEECH, what);
+              self.socket.emit(__WEBPACK_IMPORTED_MODULE_4__lib_const_socketNames___default.a.SPEECH, { text: text, me: _this.state.me });
             }
           }
         });
@@ -20667,14 +20683,19 @@ var App = function (_Component) {
       _this.setState({ strangerStream: strangerStream });
     };
 
-    _this.handleWSpeechPost = function (text) {
-      __WEBPACK_IMPORTED_MODULE_10__lib_const_global___default.a.events.emit(__WEBPACK_IMPORTED_MODULE_5__lib_const_eventNames___default.a.SPEECH, text);
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_7__lib_modules_speak__["a" /* default */])(text);
+    _this.handleWSpeechPost = function (_ref2) {
+      var text = _ref2.text,
+          me = _ref2.me;
+
+      if (_this.state.me && me.userId === _this.state.me.userId) {
+        __WEBPACK_IMPORTED_MODULE_10__lib_const_global___default.a.events.emit(__WEBPACK_IMPORTED_MODULE_5__lib_const_eventNames___default.a.SPEECH, text);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_7__lib_modules_speak__["a" /* default */])(text);
+      }
     };
 
-    _this.handleWSFound = function (_ref2) {
-      var stranger = _ref2.stranger,
-          me = _ref2.me;
+    _this.handleWSFound = function (_ref3) {
+      var stranger = _ref3.stranger,
+          me = _ref3.me;
 
       if (_this.state.me && stranger.userId === _this.state.me.userId) {
         _this.setState({ me: stranger, stranger: me });
@@ -20799,7 +20820,7 @@ var App = function (_Component) {
       {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 379
+          lineNumber: 382
         }
       },
       childrenWithProps
@@ -44462,4 +44483,4 @@ module.exports = __webpack_require__(167);
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=main.4c2a92e71f443d4a7f36.js.map
+//# sourceMappingURL=main.73b761e238a813f12f41.js.map

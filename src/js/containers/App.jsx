@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-21T14:56:05+01:00
+* @Last modified time: 2016-12-22T15:00:29+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -142,7 +142,7 @@ class App extends Component {
 
         }
 
-        self.socket.emit(socketNames.SPEECH, text);
+        self.socket.emit(socketNames.SPEECH, {text, me: this.state.me});
         if (text !== annNames.OK) {
           //canListen = false;
         }
@@ -150,7 +150,7 @@ class App extends Component {
         if (text.indexOf(annNames.STEVE) !== - 1 && text.indexOf(annNames.STEVE) < 2) {
           const what = text.replace(annNames.STEVE, ``).trim().toLowerCase();
           if (what) {
-            self.socket.emit(socketNames.SPEECH, what);
+            self.socket.emit(socketNames.SPEECH, {text, me: this.state.me});
           }
         }
 
@@ -283,6 +283,7 @@ class App extends Component {
   handleWSpeechPost = text => {
     global.events.emit(eventNames.SPEECH, text);
     speak(text);
+
   }
   handleWSFound = ({stranger, me}) => {
     if (this.state.me && stranger.userId === this.state.me.userId) {
