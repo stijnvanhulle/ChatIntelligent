@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-22T15:16:47+01:00
+* @Last modified time: 2016-12-22T15:41:58+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -329,10 +329,10 @@ class App extends Component {
     const {id} = this.socket;
 
     this.peer = new Peer(id, {
-      host: `serene-inlet-24249.herokuapp.com`,
+      host: `vps343571.ovh.net`,
       port: ``,
       path: `/api`,
-      secure: true
+      secure: false
     });
     this.peer.on(`open`, () => {
       //const self = this;
