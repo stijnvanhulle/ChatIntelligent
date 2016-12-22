@@ -3,7 +3,7 @@
 * @Date:   2016-12-05T14:32:42+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-22T14:20:08+01:00
+* @Last modified time: 2016-12-22T14:25:45+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -12,7 +12,7 @@ import TextInput from '../common/textInput';
 
 const RegisterForm = ({user, handleChange, handleSave, saving, errors}) => {
   return (
-    <form>
+    <form onSubmit={handleSave}>
       <h1>Registeer</h1>
       <TextInput name='firstName' required={true} label='firstName' value={user.firstName ? user.firstName : ``} handleChange={handleChange} error={errors.firstName} />
 
@@ -28,7 +28,7 @@ const RegisterForm = ({user, handleChange, handleSave, saving, errors}) => {
 
       <input type='submit' disabled={saving} value={saving
         ? `Register...`
-        : `Register`} className='btn btn-primary' onClick={handleSave} />
+        : `Register`} className='btn btn-primary' />
     </form>
   );
 };
