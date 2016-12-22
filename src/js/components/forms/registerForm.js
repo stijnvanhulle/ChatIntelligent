@@ -3,7 +3,7 @@
 * @Date:   2016-12-05T14:32:42+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-21T14:29:18+01:00
+* @Last modified time: 2016-12-22T14:20:08+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -14,16 +14,16 @@ const RegisterForm = ({user, handleChange, handleSave, saving, errors}) => {
   return (
     <form>
       <h1>Registeer</h1>
-      <TextInput name='firstName' label='firstName' value={user.firstName ? user.firstName : ``} handleChange={handleChange} error={errors.firstName} />
+      <TextInput name='firstName' required={true} label='firstName' value={user.firstName ? user.firstName : ``} handleChange={handleChange} error={errors.firstName} />
 
-      <TextInput name='lastName' label='lastName' value={user.lastName ? user.lastName : ``} handleChange={handleChange} error={errors.lastName} />
+      <TextInput name='lastName' required={true} label='lastName' value={user.lastName ? user.lastName : ``} handleChange={handleChange} error={errors.lastName} />
 
-      <TextInput name='username' label='username' value={user.username ? user.username : ``} handleChange={handleChange} error={errors.username} />
+      <TextInput name='username' required={true} label='username' value={user.username ? user.username : ``} handleChange={handleChange} error={errors.username} />
 
-      <TextInput name='email' type='email' label='email' value={user.email ? user.email : ``} handleChange={handleChange} error={errors.email} />
+      <TextInput name='email' required={true} type='email' label='email' value={user.email ? user.email : ``} handleChange={handleChange} error={errors.email} />
 
-      <TextInput name='password' type='password' label='password' value={user.password ? user.password : ``} handleChange={handleChange} error={errors.password} />
-      <TextInput name='passwordRepeat' type='password' label='passwordRepeat' value={user.passwordRepeat ? user.passwordRepeat : ``} handleChange={handleChange} />
+      <TextInput name='password' required={true} type='password' label='password' value={user.password ? user.password : ``} handleChange={handleChange} error={errors.password} />
+      <TextInput name='passwordRepeat' required={true} type='password' label='passwordRepeat' value={user.passwordRepeat ? user.passwordRepeat : ``} handleChange={handleChange} />
 
 
       <input type='submit' disabled={saving} value={saving
