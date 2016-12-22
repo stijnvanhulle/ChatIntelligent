@@ -11789,7 +11789,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 * @Date:   2016-12-14T19:55:16+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-21T14:46:01+01:00
+* @Last modified time: 2016-12-22T14:09:54+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -11798,7 +11798,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-21T14:46:01+01:00
+* @Last modified time: 2016-12-22T14:09:54+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -11961,7 +11961,7 @@ var _initialiseProps = function _initialiseProps() {
     });
   };
 
-  this.messageView = function (item) {
+  this.messageView = function (item, i) {
     var confirmed = void 0,
         online = void 0;
     if (item.isConfirmed) {
@@ -11978,7 +11978,7 @@ var _initialiseProps = function _initialiseProps() {
     if (item.isConfirmed) {
       return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
         'div',
-        { key: item.user2.id, __source: {
+        { key: i, __source: {
             fileName: _jsxFileName,
             lineNumber: 155
           }
@@ -12003,7 +12003,7 @@ var _initialiseProps = function _initialiseProps() {
     } else {
       return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
         'div',
-        { key: item.user2.id, __source: {
+        { key: i, __source: {
             fileName: _jsxFileName,
             lineNumber: 163
           }
@@ -20217,7 +20217,7 @@ var _jsxFileName = '/Users/stijnvanhulle/GitHub/EXW-20162017-06/src/js/component
 * @Date:   2016-12-05T14:32:42+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-21T13:45:19+01:00
+* @Last modified time: 2016-12-22T14:17:23+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -20259,9 +20259,18 @@ var LoginForm = function LoginForm(_ref) {
         lineNumber: 21
       }
     }),
+    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+      'a',
+      { href: '/register', __source: {
+          fileName: _jsxFileName,
+          lineNumber: 25
+        }
+      },
+      'Register'
+    ),
     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'submit', disabled: saving, value: saving ? 'Loging in...' : 'Login', className: 'btn btn-primary', onClick: handleSave, __source: {
         fileName: _jsxFileName,
-        lineNumber: 25
+        lineNumber: 27
       }
     })
   );
@@ -44462,4 +44471,4 @@ module.exports = __webpack_require__(167);
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=main.fd399b49b958018b5e2c.js.map
+//# sourceMappingURL=main.4c780bf8e14bbbcc0ca1.js.map

@@ -3,7 +3,7 @@
 * @Date:   2016-12-14T19:55:16+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-21T14:46:01+01:00
+* @Last modified time: 2016-12-22T14:09:54+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -12,7 +12,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-21T14:46:01+01:00
+* @Last modified time: 2016-12-22T14:09:54+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -136,7 +136,7 @@ class FriendsPage extends Component {
 
   }
 
-  messageView = item => {
+  messageView = (item, i) => {
     let confirmed,
       online;
     if (item.isConfirmed) {
@@ -152,7 +152,7 @@ class FriendsPage extends Component {
 
     if (item.isConfirmed) {
       return (
-        <div key={item.user2.id}>{item.user2.firstName} {item.user2.lastName}
+        <div key={i}>{item.user2.firstName} {item.user2.lastName}
           -- {confirmed}
           -- {online}
           <button disabled={!item.user2.online} onClick={this.callFriend.bind(this, item.user2.id)}>Connect</button>
@@ -160,7 +160,7 @@ class FriendsPage extends Component {
       );
     } else {
       return (
-        <div key={item.user2.id}>{item.user2.firstName} {item.user2.lastName}
+        <div key={i}>{item.user2.firstName} {item.user2.lastName}
           -- {confirmed}
           -- {online}
           <button disabled={!item.user2.online} onClick={this.addFriend.bind(this, item.user2)}>Send invite</button>

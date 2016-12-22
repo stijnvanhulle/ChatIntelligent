@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-22T00:08:25+01:00
+* @Last modified time: 2016-12-22T14:13:56+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -14,7 +14,8 @@ const mongoose = require("mongoose");
 const Server = require('hapi').Server;
 //const WebpackPlugin = require('hapi-webpack-plugin');
 const port = process.env.PORT;
-const mongo = process.env.mongo || 'mongodb://admin:admin@ds141118.mlab.com:41118/chatintelligent';
+const mongo = process.env.MONGO || 'mongodb://admin:admin@ds141118.mlab.com:41118/chatintelligent';
+console.log(mongo);
 const {version} = require('../package.json');
 
 const server = new Server({
