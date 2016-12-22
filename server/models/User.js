@@ -3,7 +3,7 @@
 * @Date:   2016-10-13T18:09:11+02:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-22T15:12:03+01:00
+* @Last modified time: 2016-12-22T16:33:45+01:00
 * @License: stijnvanhulle.be
 */
 const EventEmitter = require('events');
@@ -17,7 +17,9 @@ class User {
     try {
       this.firstName = firstName;
       this.lastName = lastName;
-      this.username = username.toLowerCase();
+      this.username = username
+        ? username.toLowerCase()
+        : username;
       this.password = password;
       this.email = email;
     } catch (e) {

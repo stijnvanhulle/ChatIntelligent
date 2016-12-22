@@ -3,7 +3,7 @@
 * @Date:   2016-12-14T19:55:16+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-22T14:09:54+01:00
+* @Last modified time: 2016-12-22T17:00:36+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -12,7 +12,7 @@
 * @Date:   2016-11-03T14:00:47+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-22T14:09:54+01:00
+* @Last modified time: 2016-12-22T17:00:36+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -36,13 +36,16 @@ class FriendsPage extends Component {
   }
   constructor(props, context) {
     super(props, context);
-
+    const self = this;
     let userId;
     try {
       userId = JSON.parse(localStorage.getItem(`userId`));
       this.state.meId = userId;
       if (userId) {
-        this.props.actions.loadFriends(userId);
+        setTimeout(() => {
+          self.props.actions.loadFriends(userId);
+        }, 100);
+
       } else {
         console.log(`no user id`);
         if (this.context.router) {

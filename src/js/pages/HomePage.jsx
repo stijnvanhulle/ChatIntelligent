@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-21T14:13:34+01:00
+* @Last modified time: 2016-12-22T17:04:28+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -17,6 +17,7 @@ import Video from '../components/Video';
 import Accept from '../components/Accept';
 import Intelligent from '../components/Intelligent';
 import global from '../lib/const/global';
+import {setParams} from '../lib/functions';
 import url from '../actions/lib/url';
 import FriendsPage from './FriendsPage';
 import axios from 'axios';
@@ -84,8 +85,17 @@ class HomePage extends Component {
       }
     });
 
-    global.events.on(eventNames.NEWCALL, () => {
-      self.setState({isAccept: true, text: `hallo, accpet`});
+    global.events.on(eventNames.NEWCALL, stranger => {
+      if (stranger && stranger.userId) {
+        axios.get(setParams(url.USER_GET, stranger.userId)).then(response => {
+          const user = response.data;
+          console.log(user);
+          self.setState({isAccept: true, text: `${user.firstName} ${user.lastName} want to connect with you`});
+        }).catch(err => {
+          console.log(err);
+        });
+      }
+
     });
 
     global.events.on(eventNames.CONNECT, user => {
@@ -94,15 +104,26 @@ class HomePage extends Component {
     });
 
     global.events.on(eventNames.NEWFRIEND, friend => {
-      self.setState({isMessage: true, text: `hallo, accpet`, friend});
 
-      this.props.friendActions.loadFriends(this.state.me);
+      if (friend && friend.user1) {
+        axios.get(setParams(url.USER_GET, friend.user1)).then(response => {
+          const user = response.data;
+          console.log(user);
+          self.setState({isMessage: true, text: `${user.firstName} ${user.lastName} want to be your friend`, friend});
+          this.props.friendActions.loadFriends(this.state.me);
+        }).catch(err => {
+          console.log(err);
+        });
+      }
 
     });
   }
 
   onAccept = e => {
-    e.preventDefault();
+    if (e) {
+      e.preventDefault();
+    }
+
     if (this.state.isAccept) {
       this.setState({isAccept: false});
       global.events.emit(eventNames.ACCEPTED, true);
@@ -120,7 +141,9 @@ class HomePage extends Component {
 
   }
   onDecline = e => {
-    e.preventDefault();
+    if (e) {
+      e.preventDefault();
+    }
     if (this.state.isAccept) {
       this.setState({isAccept: false});
       global.events.emit(eventNames.ACCEPTED, false);
