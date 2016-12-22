@@ -3,7 +3,7 @@
 * @Date:   2016-12-02T09:44:31+01:00
 * @Email:  me@stijnvanhulle.be
 * @Last modified by:   stijnvanhulle
-* @Last modified time: 2016-12-22T15:06:45+01:00
+* @Last modified time: 2016-12-22T15:16:47+01:00
 * @License: stijnvanhulle.be
 */
 
@@ -140,6 +140,12 @@ class App extends Component {
             });
           }
 
+        }
+
+        if (text.indexOf(annNames.ENDCALL) !== - 1) {
+          global.events.emit(eventNames.CALLEND, true);
+          global.events.emit(eventNames.CANSTART, false);
+          global.events.emit(eventNames.ISMESSAGE, false);
         }
 
         //self.socket.emit(socketNames.SPEECH, {text, me: this.state.me});
