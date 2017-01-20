@@ -1,6 +1,6 @@
 # Chatintelligent
 
-Chatintelligent is a application where you can chat with friends and also with strangers. You can call someone by saying 'Call [username]. There is also a intelligent build in where you can ask questions, this can been done by saying 'Steve [question]'.
+Chatintelligent is a application where you can chat with friends and strangers. You can call someone by saying 'Call [username]. There is also a intelligent build in where you can ask questions, this can been done by saying 'Steve [question]'.
 The connection between the video is handeld by WebRTC, so no server needed to process the video.
 
 Online version:
